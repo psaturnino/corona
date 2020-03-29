@@ -4,10 +4,6 @@ const fs = require('fs');
 const https = require('https');
 
 
-/* GET users listing. */
-/*router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});*/
 
 function getCountries(stack) {
 
@@ -20,8 +16,11 @@ function getCountries(stack) {
     element_ = element.split(",")
 
     if (i && element_[1]) {
-      countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
-      country.push(countryName)
+      countryName = element_[1]/*+(element_[0]?" - "+element_[0]:"")*/
+      if (country.indexOf(countryName) == -1) country.push(countryName)
+      
+      /*countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
+      country.push(countryName)*/
     }
     i++;
 
@@ -59,7 +58,8 @@ function getDailyAmount(stack, country="") {
   stack.forEach(element => {
       element_ = element.split(",")
 
-      countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
+      //countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
+      countryName = element_[1]
       
       if ((country && countryName == country) || !country) {
         element_.shift()

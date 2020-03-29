@@ -14,4 +14,6 @@
   }
 }
 
+#country, .shortcut-coutries {float:left}
+.shortcut-coutries{padding-left: 5px; padding-right: 5px; cursor: pointer;}
 .linkupdate{cursor: pointer; float:right}

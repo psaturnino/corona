@@ -40,7 +40,7 @@ class App extends Component {
 
   
   handleChange = (function(e){
-    fetch("/csvdata/"+e.target.value)
+    fetch("/csvdata/"+document.getElementById("country").value)
     .then((res) => {return res.json()})
     .then((res) => {this.changeState (res)})
   }.bind(this))
@@ -50,6 +50,11 @@ class App extends Component {
     fetch("/csvdata/?updatedata")
     .then(res => {return res.json()})
     .then((res) => {document.getElementById("country").value=""; this.getData()})
+  }
+
+  handleClick (country) {
+    document.getElementById("country").value = country
+    this.handleChange()
   }
   
 
@@ -127,10 +132,17 @@ class App extends Component {
       <div className="App">
         <select id="country" onChange={this.handleChange}>
           <option value="">Countries</option>
-        {this.state.countries.map((country, key) =>
-          <option key={"country"+key} value={country}>{country}</option>
-        )}
-        </select> <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server</div>
+          {this.state.countries.map((country, key) =>
+            <option key={"country"+key} value={country}>{country}</option>
+          )}
+        </select> 
+        <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("China")}>&bull; China</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Italy")}>&bull; Italy</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
         <div><canvas id="myChart"></canvas></div>
         <div id="totals">
           <b>
