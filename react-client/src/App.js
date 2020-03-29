@@ -136,7 +136,7 @@ class App extends Component {
             <option key={"country"+key} value={country}>{country}</option>
           )}
         </select> 
-        <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server</div>
+        <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server (John Hopkins)</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
