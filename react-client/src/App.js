@@ -3,59 +3,11 @@ import './App.css';
 import Chart from 'chart.js';
 
 let chart; 
-
-function buildChart(res) {
-  var ctx = document.getElementById('myChart');
-
-  if (chart) chart.destroy()
-
-  chart = new Chart(ctx,
-    {
-      "type":"line",
-      "data": {
-        "labels":res[1],
-        "datasets":[
-          {
-          "label":"Cases",
-          "data":res[2],
-          "fill":false,
-          "borderColor":"rgb(75, 192, 192)",
-          "lineTension":0.1
-          },
-          {
-            "label":"Deaths",
-            "data":res[3],
-            "fill":false,
-            "borderColor":"rgb(243, 13, 13)",
-            "lineTension":0.1
-            },
-            {
-              "label":"Recovered",
-              "data":res[4],
-              "fill":false,
-              "borderColor":"rgb(13, 243, 103)",
-              "lineTension":0.1
-              }
-        ]
-      },
-      "options":{}
-    });
-
-}
-function handleChange(e) {
-  fetch("/csvdata/"+e.target.value)
-    .then(res => {return res.json()})
-    .then((res) => {
-      buildChart(res)
-    })
-
-    
-    
-    /*fetch('/users', {method: 'GET'})
-      .then(res => res.json())
-      .then(users => this.setState({ users }));*/
-      
-}
+const colors = [
+  {"color": "rgb(31, 180, 180)"},
+  {"color": "rgb(243, 13, 13)"},
+  {"color": "rgb(5, 128, 53)"}
+]
 
 class App extends Component {
   state = {
@@ -64,50 +16,127 @@ class App extends Component {
     cases: [],
     deaths: [],
     recovered: [],
+    totals: {}
   }
 
-  componentDidMount() {
+  
+  /*constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }*/ 
 
+  /*handleChange = (e) => {
+    fetch("/csvdata/"+e.target.value)
+      .then((res) => {return res.json()})
+      .then((res) => {this.changeState (res)})
+  }*/
+
+  getData() {
     fetch("/csvdata")
-    .then(res => {
-      return res.json()
+    .then((res) => {return res.json()})
+    .then((res) => {this.changeState (res)
     })
-    .then((res) => {
+  }
 
-      console.log(res[2])
-      this.setState({ countries: res[0] }); 
-      this.setState({ dates: res[1] }); 
-      this.setState({ cases: res[2] }); 
-      this.setState({ deaths: res[3] }); 
-      this.setState({ recovered: res[4] }); 
+  
+  handleChange = (function(e){
+    fetch("/csvdata/"+e.target.value)
+    .then((res) => {return res.json()})
+    .then((res) => {this.changeState (res)})
+  }.bind(this))
 
-      buildChart(res)
-
-    })  
-
+  handleClickUpdate = (e) =>{
     
-    /*fetch('/users', {method: 'GET'})
-      .then(res => res.json())
-      .then(users => this.setState({ users }));*/
+    fetch("/csvdata/?updatedata")
+    .then(res => {return res.json()})
+    .then((res) => {document.getElementById("country").value=""; this.getData()})
+  }
+  
 
-      
+  componentDidMount() {
+    this.getData()
+  }
 
+  componentDidUpdate() {
+    this.buildChart()
+  }
 
+  changeState (csvdata) {
+    if (!csvdata.length) {
+      csvdata = [];
+      csvdata[0] = [];
+      csvdata[1] = [];
+      csvdata[2] = [];
+      csvdata[3] = [];
+      csvdata[4] = [];
+    }
 
+    console.log(csvdata[0])
+    this.setState({ countries: csvdata[0] }); 
+    this.setState({ dates: csvdata[1] }); 
+    this.setState({ cases: csvdata[2][0] }); 
+    this.setState({ deaths: csvdata[3][0] }); 
+    this.setState({ recovered: csvdata[4][0] }); 
+    this.setState({ totals: {"cases":csvdata[2][1], "deaths":csvdata[3][1], "recovered":csvdata[4][1]} }); 
+  }
+
+  buildChart() {
+    var ctx = document.getElementById('myChart');
+  
+    if (chart) chart.destroy()
+  
+    chart = new Chart(ctx,
+      {
+        "type":"line",
+        "data": {
+          "labels":this.state.dates,
+          "datasets":[
+            {
+            "label":"Cases",
+            "data":this.state.cases,
+            "fill":false,
+            "borderColor":colors[0].color,
+            "lineTension":0.1
+            },
+            {
+              "label":"Deaths",
+              "data":this.state.deaths,
+              "fill":false,
+              "borderColor":colors[1].color,
+              "lineTension":0.1
+              },
+              {
+                "label":"Recovered",
+                "data":this.state.recovered,
+                "fill":false,
+                "borderColor":colors[2].color,
+                "lineTension":0.1
+                }
+          ]
+        },
+        "options":{}
+      });
+  
   }
 
   
 
   render() {
     return (
+    
       <div className="App">
-        <select onChange={handleChange}>
+        <select id="country" onChange={this.handleChange}>
           <option value="">Countries</option>
         {this.state.countries.map((country, key) =>
           <option key={"country"+key} value={country}>{country}</option>
         )}
-        </select>
+        </select> <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server</div>
         <div><canvas id="myChart"></canvas></div>
+        <div id="totals">
+          <span style={colors[0]}> Cases: {this.state.totals.cases} </span> - 
+          <span style={colors[1]}> Deaths: {this.state.totals.deaths} </span> -
+          <span style={colors[2]}> Recovered: {this.state.totals.recovered}</span>
+        </div>
       </div>
     );
   }
