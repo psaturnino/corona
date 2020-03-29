@@ -19,17 +19,6 @@ class App extends Component {
     totals: {}
   }
 
-  
-  /*constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }*/ 
-
-  /*handleChange = (e) => {
-    fetch("/csvdata/"+e.target.value)
-      .then((res) => {return res.json()})
-      .then((res) => {this.changeState (res)})
-  }*/
 
   getData() {
     fetch("/csvdata")
@@ -145,6 +134,8 @@ class App extends Component {
         <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("France")}>&bull; France</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
+
         <div><canvas id="myChart"></canvas></div>
         <div id="totals">
           <b>

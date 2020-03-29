@@ -13,9 +13,11 @@ function getCountries(stack) {
 
   stack.forEach(element => {
     
+    element = element.replace("\"", "")
     element_ = element.split(",")
 
     if (i && element_[1]) {
+      
       countryName = element_[1]/*+(element_[0]?" - "+element_[0]:"")*/
       if (country.indexOf(countryName) == -1) country.push(countryName)
       
@@ -56,9 +58,11 @@ function getDailyAmount(stack, country="") {
   let countryName = ""
 
   stack.forEach(element => {
+      element = element.replace("\"", "")
       element_ = element.split(",")
 
       //countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
+      
       countryName = element_[1]
       
       if ((country && countryName == country) || !country) {
