@@ -133,9 +133,11 @@ class App extends Component {
         </select> <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server</div>
         <div><canvas id="myChart"></canvas></div>
         <div id="totals">
+          <b>
           <span style={colors[0]}> Cases: {this.state.totals.cases} </span> - 
           <span style={colors[1]}> Deaths: {this.state.totals.deaths} </span> -
           <span style={colors[2]}> Recovered: {this.state.totals.recovered}</span>
+          </b>
         </div>
       </div>
     );
