@@ -143,6 +143,8 @@ class App extends Component {
         <div className="shortcut-coutries" onClick={() => this.handleClick("China")}>&bull; China</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Italy")}>&bull; Italy</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("France")}>&bull; France</div>
+        <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
         <div><canvas id="myChart"></canvas></div>
         <div id="totals">
           <b>
