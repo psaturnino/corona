@@ -134,9 +134,9 @@ class App extends Component {
         <div><canvas id="myChart"></canvas></div>
         <div id="totals">
           <b>
-          <span style={colors[0]}> Cases: {this.state.totals.cases} </span> - 
-          <span style={colors[1]}> Deaths: {this.state.totals.deaths} </span> -
-          <span style={colors[2]}> Recovered: {this.state.totals.recovered}</span>
+          <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
+          <span style={colors[1]}>Deaths: {this.state.totals.deaths}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
+          <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
           </b>
         </div>
       </div>
