@@ -90,8 +90,8 @@ class CSVData {
   }
 
   getDailyAmount(stack) {
-    let element_ = [], results = []
-    let j = 0, current = 0, totals = 0, i=0;
+    let element_ = [], results = [], dailyIncrease = []
+    let j = 0, current = 0, totals = 0, i=0, lastcurrent=0;
     let countryName = ""
   
     stack.forEach(element => {
@@ -114,7 +114,9 @@ class CSVData {
           element_.forEach(elem => {
             if (j >= this.startAt) { 
               if (!results[i]) results[i] = 0
+              
               current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
+
               results[i] += current
               
               if (j == (element_.length-1)) totals += current
@@ -122,11 +124,19 @@ class CSVData {
             }
             j++;
           });
-          
+  
         }
     });
+
+    i=0
+    results.forEach(elem => {
+      current = elem
+      dailyIncrease[i] = (current - lastcurrent)>0?(current - lastcurrent):0
+      lastcurrent = current
+      i++
+    })
   
-    return [results, totals]
+    return [results, totals, dailyIncrease]
   }
 
   updateData(callback) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Chart from 'chart.js';
 
-let chart; 
+let chart, chartDaily; 
 const colors = [
   {"color": "rgb(31, 180, 180)"},
   {"color": "rgb(243, 13, 13)"},
@@ -16,7 +16,10 @@ class App extends Component {
     cases: [],
     deaths: [],
     recovered: [],
-    totals: {}
+    totals: {},
+    casesDaily: [],
+    deathsDaily: [],
+    recoveredDaily: []
   }
 
 
@@ -65,17 +68,23 @@ class App extends Component {
       csvdata[4] = [];
     }
 
+    
     this.setState({ countries: csvdata[0] }); 
     this.setState({ dates: csvdata[1] }); 
     this.setState({ cases: csvdata[2][0] }); 
     this.setState({ deaths: csvdata[3][0] }); 
     this.setState({ recovered: csvdata[4][0] }); 
     this.setState({ totals: {"cases":csvdata[2][1], "deaths":csvdata[3][1], "recovered":csvdata[4][1]} }); 
+
+    this.setState({ casesDaily: csvdata[2][2] }); 
+    this.setState({ deathsDaily: csvdata[3][2] }); 
+    this.setState({ recoveredDaily: csvdata[4][2] }); 
+    
   }
 
   buildChart() {
-    var ctx = document.getElementById('myChart');
-  
+    var ctx = document.getElementById('myChartacc');
+    console.log(this.state)
     if (chart) {
       chart.data.labels = this.state.dates
       chart.data.datasets[0].data = this.state.cases
@@ -83,6 +92,7 @@ class App extends Component {
       chart.data.datasets[2].data = this.state.recovered
       chart.update();
     }else {
+      
       chart = new Chart(ctx,
       {
         "type":"line",
@@ -106,6 +116,53 @@ class App extends Component {
               {
                 "label":"Recovered",
                 "data":this.state.recovered,
+                "fill":false,
+                "borderColor":colors[2].color,
+                "lineTension":0.1
+                }
+          ]
+        },
+        "options":{}
+      });
+    }
+
+
+
+    var ctx2 = document.getElementById('myChartDaily');
+  
+    if (chartDaily) {
+      
+      chartDaily.data.labels = this.state.dates
+      chartDaily.data.datasets[0].data = this.state.casesDaily
+      chartDaily.data.datasets[1].data = this.state.deathsDaily
+      chartDaily.data.datasets[2].data = this.state.recoveredDaily
+      chartDaily.update();
+
+    }else {
+      
+      chartDaily = new Chart(ctx2,
+      {
+        "type":"line",
+        "data": {
+          "labels":this.state.dates,
+          "datasets":[
+            {
+            "label":"Cases",
+            "data":this.state.casesDaily,
+            "fill":false,
+            "borderColor":colors[0].color,
+            "lineTension":0.1
+            },
+            {
+              "label":"Deaths",
+              "data":this.state.deathsDaily,
+              "fill":false,
+              "borderColor":colors[1].color,
+              "lineTension":0.1
+              },
+              {
+                "label":"Recovered",
+                "data":this.state.recoveredDaily,
                 "fill":false,
                 "borderColor":colors[2].color,
                 "lineTension":0.1
@@ -150,8 +207,10 @@ class App extends Component {
           </b>
         </div>
 
-        <div className="left">Accumulated:</div>
-        <canvas id="myChart"></canvas>
+        <div className="left clear">Accumulated:</div>
+        <canvas id="myChartacc"></canvas>
+        <div className="left clear">Daily:</div>
+        <canvas id="myChartDaily"></canvas>
         
       </div>
 
