@@ -6,7 +6,7 @@ const https = require('https');
 
 function download(url, dest, callback) {
   var file = fs.createWriteStream(dest);
-  https.get(url, function (response) {
+  var request = https.get(url, function (response) {
       response.pipe(file);
       file.on('finish', function () {
           file.close(callback); // close() is async, call callback after close completes.
@@ -20,6 +20,10 @@ function download(url, dest, callback) {
 }
 
 class CSVData {
+  remoteFiles = new Array("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+  
+  localFiles = new Array('public/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_recovered_global.csv');
+
   country = "";
   startAt = 0;
 
