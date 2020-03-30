@@ -144,7 +144,7 @@ class App extends Component {
           </b>
         </div>
 
-        <div><canvas id="myChart"></canvas></div>
+        <canvas id="myChart"></canvas>
         
       </div>
     );

@@ -18,3 +18,4 @@
 .shortcut-coutries{padding-left: 5px; padding-right: 5px; cursor: pointer;}
 .linkupdate{cursor: pointer; float:right}
 #totals{clear:both}
+#myChart{max-height:650px}
