@@ -125,7 +125,7 @@ class App extends Component {
             <option key={"country"+key} value={country}>{country}</option>
           )}
         </select> 
-        <div className="linkupdate" onClick={this.handleClickUpdate}>Update Data from Server (John Hopkins)</div>
+        <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
@@ -136,7 +136,6 @@ class App extends Component {
         <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
 
-        <div><canvas id="myChart"></canvas></div>
         <div id="totals">
           <b>
           <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
@@ -144,6 +143,9 @@ class App extends Component {
           <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
           </b>
         </div>
+
+        <div><canvas id="myChart"></canvas></div>
+        
       </div>
     );
   }
