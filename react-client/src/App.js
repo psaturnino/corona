@@ -65,7 +65,6 @@ class App extends Component {
       csvdata[4] = [];
     }
 
-    console.log(csvdata[0])
     this.setState({ countries: csvdata[0] }); 
     this.setState({ dates: csvdata[1] }); 
     this.setState({ cases: csvdata[2][0] }); 
@@ -77,9 +76,14 @@ class App extends Component {
   buildChart() {
     var ctx = document.getElementById('myChart');
   
-    if (chart) chart.destroy()
-  
-    chart = new Chart(ctx,
+    if (chart) {
+      chart.data.labels = this.state.dates
+      chart.data.datasets[0].data = this.state.cases
+      chart.data.datasets[1].data = this.state.deaths
+      chart.data.datasets[2].data = this.state.recovered
+      chart.update();
+    }else {
+      chart = new Chart(ctx,
       {
         "type":"line",
         "data": {
@@ -110,6 +114,7 @@ class App extends Component {
         },
         "options":{}
       });
+    }
   
   }
 
@@ -125,6 +130,7 @@ class App extends Component {
             <option key={"country"+key} value={country}>{country}</option>
           )}
         </select> 
+        
         <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
@@ -144,9 +150,11 @@ class App extends Component {
           </b>
         </div>
 
+        <div className="left">Accumulated:</div>
         <canvas id="myChart"></canvas>
         
       </div>
+
     );
   }
 }
