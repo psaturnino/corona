@@ -142,7 +142,7 @@ class App extends Component {
       
       chartDaily = new Chart(ctx2,
       {
-        "type":"line",
+        "type":"bar",
         "data": {
           "labels":this.state.dates,
           "datasets":[
@@ -150,22 +150,19 @@ class App extends Component {
             "label":"Cases",
             "data":this.state.casesDaily,
             "fill":false,
-            "borderColor":colors[0].color,
-            "lineTension":0.1
+            "backgroundColor":colors[0].color,
             },
             {
               "label":"Deaths",
               "data":this.state.deathsDaily,
               "fill":false,
-              "borderColor":colors[1].color,
-              "lineTension":0.1
+              "backgroundColor":colors[1].color,
               },
               {
                 "label":"Recovered",
                 "data":this.state.recoveredDaily,
                 "fill":false,
-                "borderColor":colors[2].color,
-                "lineTension":0.1
+                "backgroundColor":colors[2].color,
                 }
           ]
         },
