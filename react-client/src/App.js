@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Chart from 'chart.js';
+import Chart from './Chart';
+import Loader from './Loader';
 
-let chart, chartDaily; 
 const colors = [
   {"color": "rgb(31, 180, 180)"},
   {"color": "rgb(243, 13, 13)"},
@@ -19,33 +19,41 @@ class App extends Component {
     totals: {},
     casesDaily: [],
     deathsDaily: [],
-    recoveredDaily: []
+    recoveredDaily: [],
+    loaderActive: true
   }
 
-
+  
   getData() {
+    this.setState({loaderActive: true})
     fetch("/csvdata")
     .then((res) => {return res.json()})
-    .then((res) => {this.changeState (res)
+    .then((res) => {
+      this.changeState (res);
+      this.setState({loaderActive: false})
     })
   }
 
   
   handleChange = (function(e){
+    this.setState({loaderActive: true})
     fetch("/csvdata/"+document.getElementById("country").value)
     .then((res) => {return res.json()})
-    .then((res) => {this.changeState (res)})
+    .then((res) => {
+      this.changeState (res)
+      this.setState({loaderActive: false})
+    })
   }.bind(this))
 
   handleClickUpdate = (e) =>{
-    
+    this.setState({loaderActive: true})
     fetch("/csvdata/?updatedata")
     .then(res => {return res.json()})
     .then((res) => {document.getElementById("country").value=""; this.getData()})
   }
 
   handleClick (country) {
-    if (document.getElementById("country").value == country) document.getElementById("country").value = ""
+    if (document.getElementById("country").value === country) document.getElementById("country").value = ""
     else document.getElementById("country").value = country
     this.handleChange()
   }
@@ -53,10 +61,6 @@ class App extends Component {
 
   componentDidMount() {
     this.getData()
-  }
-
-  componentDidUpdate() {
-    this.buildChart()
   }
 
   changeState (csvdata) {
@@ -83,101 +87,8 @@ class App extends Component {
     
   }
 
-  buildChart() {
-    var ctx = document.getElementById('myChartacc');
-    console.log(this.state)
-    if (chart) {
-      chart.data.labels = this.state.dates
-      chart.data.datasets[0].data = this.state.cases
-      chart.data.datasets[1].data = this.state.deaths
-      chart.data.datasets[2].data = this.state.recovered
-      chart.update();
-    }else {
-      
-      chart = new Chart(ctx,
-      {
-        "type":"line",
-        "data": {
-          "labels":this.state.dates,
-          "datasets":[
-            {
-            "label":"Cases",
-            "data":this.state.cases,
-            "fill":false,
-            "borderColor":colors[0].color,
-            "lineTension":0.1
-            },
-            {
-              "label":"Deaths",
-              "data":this.state.deaths,
-              "fill":false,
-              "borderColor":colors[1].color,
-              "lineTension":0.1
-              },
-              {
-                "label":"Recovered",
-                "data":this.state.recovered,
-                "fill":false,
-                "borderColor":colors[2].color,
-                "lineTension":0.1
-                }
-          ]
-        },
-        "options":{}
-      });
-    }
-
-
-
-    var ctx2 = document.getElementById('myChartDaily');
-  
-    if (chartDaily) {
-      
-      chartDaily.data.labels = this.state.dates
-      chartDaily.data.datasets[0].data = this.state.casesDaily
-      chartDaily.data.datasets[1].data = this.state.deathsDaily
-      chartDaily.data.datasets[2].data = this.state.recoveredDaily
-      chartDaily.update();
-
-    }else {
-      
-      chartDaily = new Chart(ctx2,
-      {
-        "type":"bar",
-        "data": {
-          "labels":this.state.dates,
-          "datasets":[
-            {
-            "label":"Cases",
-            "data":this.state.casesDaily,
-            "fill":false,
-            "backgroundColor":colors[0].color,
-            },
-            {
-              "label":"Deaths",
-              "data":this.state.deathsDaily,
-              "fill":false,
-              "backgroundColor":colors[1].color,
-              },
-              {
-                "label":"Recovered",
-                "data":this.state.recoveredDaily,
-                "fill":false,
-                "backgroundColor":colors[2].color,
-                }
-          ]
-        },
-        "options":{}
-      });
-    }
-  
-  }
-
-  
-
   render() {
     return (
-    
       <div className="App">
         <div className="header">
         <select id="country" onChange={this.handleChange}>
@@ -198,6 +109,7 @@ class App extends Component {
         <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
         <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
 
+        <Loader active={this.state.loaderActive} />
         <div id="totals">
           <b>
           <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
@@ -209,10 +121,11 @@ class App extends Component {
 
         <div className="chart-section">
         <div className="left clear chart-title">Accumulated:</div>
-        <canvas id="myChartacc"></canvas>
+        <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} />
         <div className="left clear chart-title">Daily:</div>
-        <canvas id="myChartDaily"></canvas>
+        <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} />
         </div>
+
         
       </div>
 
