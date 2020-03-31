@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  width:95%;
+  width:100%;
   margin:0 auto;
   
 }
@@ -20,4 +20,7 @@
 #totals{clear:both}
 #myChart{max-height:650px}
 .left{float:left}
-clear{clear:both}
+.clear{clear:both}
+.header{position: fixed; height:70px; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
+.chart-title{margin-top:70px}
+.chart-section{width:95%; margin: 0 auto;}

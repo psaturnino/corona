@@ -45,7 +45,8 @@ class App extends Component {
   }
 
   handleClick (country) {
-    document.getElementById("country").value = country
+    if (document.getElementById("country").value == country) document.getElementById("country").value = ""
+    else document.getElementById("country").value = country
     this.handleChange()
   }
   
@@ -178,6 +179,7 @@ class App extends Component {
     return (
     
       <div className="App">
+        <div className="header">
         <select id="country" onChange={this.handleChange}>
           <option value="">Countries</option>
           {this.state.countries.map((country, key) =>
@@ -203,11 +205,14 @@ class App extends Component {
           <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
           </b>
         </div>
+        </div>
 
-        <div className="left clear">Accumulated:</div>
+        <div className="chart-section">
+        <div className="left clear chart-title">Accumulated:</div>
         <canvas id="myChartacc"></canvas>
-        <div className="left clear">Daily:</div>
+        <div className="left clear chart-title">Daily:</div>
         <canvas id="myChartDaily"></canvas>
+        </div>
         
       </div>
 
