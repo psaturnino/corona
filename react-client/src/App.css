@@ -21,6 +21,6 @@
 #myChart{max-height:650px}
 .left{float:left}
 .clear{clear:both}
-.header{position: fixed; min-height:70px; height:uto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
+.header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
 .chart-title{margin-top:70px}
 .chart-section{width:95%; margin: 0 auto;}
