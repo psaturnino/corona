@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
 import Chart from "chart.js";
 
-const colors = [
-    {"color": "rgb(31, 180, 180)"},
-    {"color": "rgb(243, 13, 13)"},
-    {"color": "rgb(5, 128, 53)"}
-  ]
-
 export default class Graph extends Component {
     
     chartRef = React.createRef();
@@ -34,24 +28,24 @@ export default class Graph extends Component {
                 "label":"Cases",
                 "data":[],
                 "fill":false,
-                "borderColor":colors[0].color,
-                "backgroundColor":colors[0].color,
+                "borderColor":this.props.colors[0].color,
+                "backgroundColor":this.props.colors[0].color,
                 "lineTension":0.1
                 },
                 {
                 "label":"Deaths",
                 "data":[],
                 "fill":false,
-                "borderColor":colors[1].color,
-                "backgroundColor":colors[1].color,
+                "borderColor":this.props.colors[1].color,
+                "backgroundColor":this.props.colors[1].color,
                 "lineTension":0.1
                 },
                 {
                     "label":"Recovered",
                     "data":[],
                     "fill":false,
-                    "borderColor":colors[2].color,
-                    "backgroundColor":colors[2].color,
+                    "borderColor":this.props.colors[2].color,
+                    "backgroundColor":this.props.colors[2].color,
                     "lineTension":0.1
                     }
             ]

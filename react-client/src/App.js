@@ -121,9 +121,9 @@ class App extends Component {
 
         <div className="chart-section">
         <div className="left clear chart-title">Accumulated:</div>
-        <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} />
+        <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
         <div className="left clear chart-title">Daily:</div>
-        <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} />
+        <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
         </div>
 
         
