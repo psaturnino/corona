@@ -91,39 +91,41 @@ class App extends Component {
     return (
       <div className="App">
         <div className="header">
-        <select id="country" onChange={this.handleChange}>
-          <option value="">Countries</option>
-          {this.state.countries.map((country, key) =>
-            <option key={"country"+key} value={country}>{country}</option>
-          )}
-        </select> 
+          <select id="country" onChange={this.handleChange}>
+            <option value="">Countries</option>
+            {this.state.countries.map((country, key) =>
+              <option key={"country"+key} value={country}>{country}</option>
+            )}
+          </select> 
+          
+          <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("China")}>&bull; China</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Italy")}>&bull; Italy</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("France")}>&bull; France</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
+          <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
+
+          <Loader active={this.state.loaderActive} />
+
+          <div id="totals">
+            <b>
+            <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
+            <span style={colors[1]}>Deaths: {this.state.totals.deaths}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
+            <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
+            </b>
+          </div>
+        </div>
+
         
-        <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("China")}>&bull; China</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Italy")}>&bull; Italy</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("France")}>&bull; France</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
-        <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
-
-        <Loader active={this.state.loaderActive} />
-        <div id="totals">
-          <b>
-          <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
-          <span style={colors[1]}>Deaths: {this.state.totals.deaths}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
-          <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
-          </b>
-        </div>
-        </div>
-
         <div className="chart-section">
-        <div className="left clear chart-title">Accumulated:</div>
-        <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
-        <div className="left clear chart-title">Daily:</div>
-        <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
+          <div className="left clear chart-title">Accumulated:</div>
+          <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
+          <div className="left clear chart-title">Daily:</div>
+          <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
         </div>
 
         
