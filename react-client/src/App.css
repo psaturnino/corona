@@ -1,8 +1,10 @@
 .App {text-align: center;width:100%;margin:0 auto;}
-#country, .shortcut-coutries {float:left}
-.shortcut-coutries{padding-left: 5px; padding-right: 5px; cursor: pointer;}
+#country, .shortcut-countries {float:left; }
+#country {margin-top:10px; margin-left:5px}
+.shortcut-countries {border-radius: 5px; padding:5px; padding-left: 10px; padding-right: 10px; margin-left:5px; cursor: pointer; background-color: #d8d8d8 }
+.shortcut-countries.sel{background-color: #b0b3fc;}
 .linkupdate{cursor: pointer; float:right}
-#totals{clear:both}
+#totals {margin-top:10px}
 #myChart{max-height:650px}
 .left{float:left}
 .clear{clear:both}

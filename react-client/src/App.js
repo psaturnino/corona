@@ -4,9 +4,9 @@ import Chart from './Chart';
 import Loader from './Loader';
 
 const colors = [
-  {"color": "rgb(31, 180, 180)"},
-  {"color": "rgb(243, 13, 13)"},
-  {"color": "rgb(5, 128, 53)"}
+  {"color": "#b0b3fc"},
+  {"color": "#f77373"},
+  {"color": "#337e50"}
 ]
 
 class App extends Component {
@@ -16,12 +16,24 @@ class App extends Component {
     cases: [],
     deaths: [],
     recovered: [],
-    totals: {},
+    totals: [],
     casesDaily: [],
     deathsDaily: [],
     recoveredDaily: [],
-    loaderActive: true
+    loaderActive: true,
+    shortcutCountries: [
+      {"name": "Tunisia"},
+      {"name": "Germany"},
+      {"name": "Portugal"},
+      {"name": "China"},
+      {"name": "Italy"},
+      {"name": "US"},
+      {"name": "France"},
+      {"name": "Korea"},
+    ]
   }
+
+  countryStack = []
 
   
   getData() {
@@ -37,7 +49,14 @@ class App extends Component {
   
   handleChange = (function(e){
     this.setState({loaderActive: true})
-    fetch("/csvdata/"+document.getElementById("country").value)
+    //fetch("/csvdata/"+document.getElementById("country").value)
+    if (document.getElementById("country").value) {
+      this.countryStack = []
+      this.countryStack.push(document.getElementById("country").value)
+    }
+
+
+    fetch("/csvdata/"+this.countryStack)
     .then((res) => {return res.json()})
     .then((res) => {
       this.changeState (res)
@@ -52,9 +71,28 @@ class App extends Component {
     .then((res) => {document.getElementById("country").value=""; this.getData()})
   }
 
-  handleClick (country) {
+  handleClick (key, country) {
+
+    let temp_ = this.state.shortcutCountries
+    temp_[key] = this.state.shortcutCountries[key]
+    
+    let indexElem = this.countryStack.indexOf(country);
+    if (indexElem > -1) {
+      this.countryStack.splice(indexElem, 1);
+      temp_[key].status = false
+      this.setState({shortcutCountries: temp_})
+    }else {
+      this.countryStack.push(country)
+      temp_[key].status = true
+      this.setState({shortcutCountries: temp_})
+    }
+    
+    console.log(this.countryStack)
+
+    document.getElementById("country").value = ""
+    /*console.log(this.countryStack)
     if (document.getElementById("country").value === country) document.getElementById("country").value = ""
-    else document.getElementById("country").value = country
+    else document.getElementById("country").value = country*/
     this.handleChange()
   }
   
@@ -79,7 +117,7 @@ class App extends Component {
     this.setState({ cases: csvdata[2][0] }); 
     this.setState({ deaths: csvdata[3][0] }); 
     this.setState({ recovered: csvdata[4][0] }); 
-    this.setState({ totals: {"cases":csvdata[2][1], "deaths":csvdata[3][1], "recovered":csvdata[4][1]} }); 
+    this.setState({ totals: [csvdata[2][1], csvdata[3][1], csvdata[4][1] ] }); 
 
     this.setState({ casesDaily: csvdata[2][2] }); 
     this.setState({ deathsDaily: csvdata[3][2] }); 
@@ -99,33 +137,34 @@ class App extends Component {
           </select> 
           
           <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Tunisia")}>&bull; Tunisia</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Germany")}>&bull; Germany</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Portugal")}>&bull; Portugal</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("China")}>&bull; China</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Italy")}>&bull; Italy</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("US")}>&bull; US</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("France")}>&bull; France</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Spain")}>&bull; Spain</div>
-          <div className="shortcut-coutries" onClick={() => this.handleClick("Korea")}>&bull; Korea, South</div>
+
+          <div className="clear"></div>
+
+          {this.state.shortcutCountries.map((country, key) => 
+            <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} />
+          )}
 
           <Loader active={this.state.loaderActive} />
 
-          <div id="totals">
+          <div className="clear"></div>
+
+          <div id="totals" className="clear">
             <b>
-            <span style={colors[0]}>Cases: {this.state.totals.cases}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
-            <span style={colors[1]}>Deaths: {this.state.totals.deaths}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
-            <span style={colors[2]}>Recovered: {this.state.totals.recovered}</span>
+            <span style={colors[0]}>Cases: {this.state.totals[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
+            <span style={colors[1]}>Deaths: {this.state.totals[1]}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
+            <span style={colors[2]}>Recovered: {this.state.totals[2]}</span>
             </b>
           </div>
         </div>
 
-        
         <div className="chart-section">
           <div className="left clear chart-title">Accumulated:</div>
-          <Chart dates={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
+          <Chart labels={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
           <div className="left clear chart-title">Daily:</div>
-          <Chart dates={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
+          <Chart labels={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
+
+          <Chart labels={[""]} cases={[this.state.totals[0]]} deaths={[this.state.totals[1]]} recovered={[this.state.totals[2]]} type={"bar"} colors={colors} />
+          
         </div>
 
         
@@ -135,4 +174,8 @@ class App extends Component {
   }
 }
 
+const ButtonCountry = ({status, name, handleClick}) => (
+ <div className={status?"shortcut-countries sel":"shortcut-countries"} onClick={handleClick}>{name}</div>
+);
+  
 export default App;

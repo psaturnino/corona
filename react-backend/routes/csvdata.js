@@ -24,12 +24,13 @@ class CSVData {
   
   localFiles = new Array('public/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_recovered_global.csv');
 
-  country = "";
+  countries = [];
   startAt = 0;
 
-  constructor (country) {
-    this.country = country
-    this.startAt = 10
+  constructor (countries) {
+    if (!countries) countries = []
+    this.countries = countries
+    this.startAt = 30
   }
 
   getFile(num) {
@@ -102,7 +103,7 @@ class CSVData {
         
         countryName = element_[1]
         
-        if ((this.country && countryName == this.country) || !this.country) {
+        if ((this.countries && countryName == this.countries[0]) || !this.countries.length) {
           element_.shift()
           element_.shift()
           element_.shift()
@@ -191,7 +192,8 @@ class CSVData {
 
 router.get('/:id', function(req, res, next) {
   
-  CSVData_ = new CSVData(req.params.id);
+  const params = req.params.id.split(",")
+  CSVData_ = new CSVData(params);
 
   let result = CSVData_.getCsvData()
   res.send(JSON.stringify(result))
