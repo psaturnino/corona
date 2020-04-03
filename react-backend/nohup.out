@@ -1,0 +1,220 @@
+
+> react-backend@0.0.0 start /Users/admin/Node.js/corona/react-backend
+> nodemon ./bin/www
+
+[33m[nodemon] 2.0.2[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching dir(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `node ./bin/www`[39m
+Listening on port 3001
+[0mGET / [36m304 [0m326.574 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m1.185 ms - -[0m
+[0mGET /favicon.ico [36m304 [0m10.529 ms - -[0m
+npm ERR! code ELIFECYCLE
+npm ERR! errno 143
+npm ERR! react-backend@0.0.0 start: `nodemon ./bin/www`
+npm ERR! Exit status 143
+npm ERR! 
+npm ERR! Failed at the react-backend@0.0.0 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/admin/.npm/_logs/2020-04-03T08_32_03_691Z-debug.log
+
+> react-backend@0.0.0 start /Users/admin/Node.js/corona/react-backend
+> nodemon ./bin/www
+
+[33m[nodemon] 2.0.2[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching dir(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `node ./bin/www`[39m
+Listening on port 3001
+[0mGET / [36m304 [0m213.608 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m1.271 ms - -[0m
+[0mGET /favicon.ico [32m200 [0m11.077 ms - 170[0m
+[0mGET /csvdata [32m200 [0m15.379 ms - 3814[0m
+[0mGET /csvdata [36m304 [0m9.285 ms - -[0m
+[0mGET /csvdata/?updatedata [32m200 [0m157.125 ms - 2229[0m
+[0mGET /csvdata [36m304 [0m12.829 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.536 ms - -[0m
+[0mGET /csvdata/Portugal [32m200 [0m6.352 ms - 3052[0m
+[0mGET /csvdata/ [32m200 [0m8.949 ms - 3814[0m
+[0mGET /csvdata/Tunisia [32m200 [0m6.871 ms - 2951[0m
+[0mGET /csvdata/ [36m304 [0m10.955 ms - -[0m
+[0mGET /csvdata/Germany [32m200 [0m6.298 ms - 3272[0m
+[0mGET /csvdata/ [36m304 [0m8.667 ms - -[0m
+[0mGET /csvdata [36m304 [0m14.220 ms - -[0m
+[0mGET /csvdata [36m304 [0m19.332 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.414 ms - -[0m
+[0mGET /csvdata/Spain [32m200 [0m6.910 ms - 3331[0m
+[0mGET /csvdata/ [36m304 [0m8.317 ms - -[0m
+[0mGET /csvdata/US [32m200 [0m7.242 ms - 3275[0m
+[0mGET /csvdata/ [36m304 [0m8.560 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.484 ms - -[0m
+[0mGET /csvdata/?updatedata [32m200 [0m215.332 ms - 928[0m
+[0mGET /csvdata [32m200 [0m8.251 ms - 2228[0m
+[0mGET /csvdata/Tunisia [36m304 [0m6.446 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m7.570 ms - -[0m
+[0mGET /csvdata/?updatedata [32m200 [0m175.559 ms - 3808[0m
+[0mGET /csvdata [32m200 [0m11.290 ms - 3814[0m
+[0mGET /csvdata/Germany [36m304 [0m6.621 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [32m200 [0m5.664 ms - 3272[0m
+[0mGET /csvdata/Portugal [36m304 [0m6.157 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.707 ms - -[0m
+[0mGET /csvdata/Tunisia [36m304 [0m6.984 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.279 ms - -[0m
+[0mGET /csvdata/China [32m200 [0m8.024 ms - 3576[0m
+[0mGET /csvdata/ [36m304 [0m8.306 ms - -[0m
+[0mGET /csvdata/Italy [32m200 [0m5.390 ms - 3472[0m
+[0mGET /csvdata/ [36m304 [0m8.940 ms - -[0m
+[0mGET /csvdata/US [36m304 [0m5.572 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.534 ms - -[0m
+[0mGET /csvdata/France [32m200 [0m5.803 ms - 3291[0m
+[0mGET /csvdata/ [36m304 [0m9.608 ms - -[0m
+[0mGET /csvdata/Korea [32m200 [0m6.158 ms - 3297[0m
+[0mGET /csvdata/ [36m304 [0m8.590 ms - -[0m
+[0mGET /csvdata/Spain [36m304 [0m5.819 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.074 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.465 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.335 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m5.846 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.923 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m5.696 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.852 ms - -[0m
+[0mGET /csvdata [36m304 [0m7.849 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.516 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.855 ms - -[0m
+[0mGET /csvdata [36m304 [0m35.574 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.002 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.842 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.118 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.989 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.917 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.552 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m11.244 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.477 ms - -[0m
+[0mGET /csvdata/Tunisia [36m304 [0m5.904 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.894 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.034 ms - -[0m
+[0mGET /csvdata/Tunisia [36m304 [0m6.954 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.329 ms - -[0m
+[0mGET /csvdata/?updatedata [32m200 [0m121.413 ms - 2573[0m
+[0mGET /csvdata [36m304 [0m10.030 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.790 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.507 ms - -[0m
+[0mGET /csvdata/Tunisia [36m304 [0m5.623 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.195 ms - -[0m
+[0mGET /csvdata/Angola [32m200 [0m5.564 ms - 2901[0m
+[0mGET /csvdata/Angola,Tunisia [32m200 [0m6.768 ms - 2901[0m
+[0mGET /csvdata/Angola [36m304 [0m6.281 ms - -[0m
+[0mGET /csvdata/Angola,Tunisia [36m304 [0m6.661 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.245 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.430 ms - -[0m
+[0mGET /csvdata/Azerbaijan [32m200 [0m6.337 ms - 2961[0m
+[0mGET /csvdata/Tunisia [36m304 [0m6.754 ms - -[0m
+[0mGET /csvdata/Tunisia,Germany [32m200 [0m5.493 ms - 2951[0m
+[0mGET /csvdata/Germany [36m304 [0m6.756 ms - -[0m
+[0mGET /csvdata/Algeria [32m200 [0m5.383 ms - 3008[0m
+[0mGET /csvdata/Germany [36m304 [0m5.777 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.434 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.883 ms - -[0m
+[0mGET /csvdata/Austria [32m200 [0m6.122 ms - 3097[0m
+[0mGET /csvdata [36m304 [0m19.895 ms - -[0m
+[0mGET /csvdata [36m304 [0m12.966 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m7.491 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m6.596 ms - -[0m
+[0mGET /csvdata [36m304 [0m7.951 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.868 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m6.308 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.733 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.069 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.865 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.926 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.650 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m5.642 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.059 ms - -[0m
+[0mGET /csvdata [36m304 [0m15.861 ms - -[0m
+[0mGET /csvdata/Tunisia [36m304 [0m7.969 ms - -[0m
+[0mGET /csvdata/Tunisia,Germany [36m304 [0m6.162 ms - -[0m
+[0mGET /csvdata/Azerbaijan [36m304 [0m5.981 ms - -[0m
+[0mGET /csvdata/Congo%20(Brazzaville) [32m200 [0m5.336 ms - 2908[0m
+[0mGET /csvdata/Portugal [36m304 [0m6.991 ms - -[0m
+[0mGET /csvdata/Portugal,China [32m200 [0m6.046 ms - 3052[0m
+[0mGET /csvdata/Angola [36m304 [0m7.093 ms - -[0m
+[0mGET /csvdata/Angola [36m304 [0m6.183 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.402 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.821 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m8.797 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m6.532 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m8.267 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.716 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m5.574 ms - -[0m
+[0mGET /csvdata/Portugal,Germany [32m200 [0m7.157 ms - 3052[0m
+[0mGET /csvdata/Andorra [32m200 [0m5.579 ms - 2956[0m
+[0mGET /csvdata/Andorra [36m304 [0m6.580 ms - -[0m
+[0mGET /csvdata [36m304 [0m16.207 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.844 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.089 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m10.061 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m18.352 ms - -[0m
+[0mGET /csvdata/Angola [36m304 [0m7.114 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m7.164 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m12.155 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.527 ms - -[0m
+[0mGET /csvdata/Antigua%20and%20Barbuda [32m200 [0m8.523 ms - 2901[0m
+[0mGET /csvdata/ [36m304 [0m9.221 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m11.160 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.737 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m17.263 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.069 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m11.021 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m7.870 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.003 ms - -[0m
+[0mGET /csvdata [36m304 [0m7.819 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m7.267 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.086 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m9.764 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m6.463 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m5.989 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.894 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.496 ms - -[0m
+[0mGET /csvdata/Armenia [32m200 [0m4.771 ms - 2969[0m
+[0mGET /csvdata/Germany [36m304 [0m5.958 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m6.873 ms - -[0m
+[0mGET /csvdata/Bahrain [32m200 [0m6.745 ms - 3042[0m
+[0mGET /csvdata/Germany [36m304 [0m6.784 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m5.848 ms - -[0m
+[0mGET /csvdata/Azerbaijan [36m304 [0m5.830 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.051 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m6.818 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.547 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m8.809 ms - -[0m
+[0mGET /csvdata/Armenia [36m304 [0m6.103 ms - -[0m
+[0mGET /csvdata/Portugal [36m304 [0m9.740 ms - -[0m
+[0mGET /csvdata/Portugal,Germany [36m304 [0m8.414 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m6.408 ms - -[0m
+[0mGET /csvdata/ [36m304 [0m9.048 ms - -[0m
+[0mGET /csvdata [36m304 [0m13.368 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m7.164 ms - -[0m
+[0mGET /csvdata/Germany,Portugal [36m304 [0m7.092 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.320 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.060 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.605 ms - -[0m
+[0mGET /csvdata [36m304 [0m7.757 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.036 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.016 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.217 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.623 ms - -[0m
+[0mGET /csvdata/Germany [36m304 [0m10.878 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.529 ms - -[0m
+[0mGET /csvdata [36m304 [0m16.247 ms - -[0m
+[0mGET /csvdata [36m304 [0m8.837 ms - -[0m
+[0mGET /csvdata [36m304 [0m9.001 ms - -[0m
+[0mGET /csvdata [36m304 [0m10.102 ms - -[0m
+[0mGET /csvdata [36m304 [0m7.552 ms - -[0m
+[0mGET /csvdata [36m304 [0m13.287 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.845 ms - -[0m
+[0mGET /csvdata [36m304 [0m30.613 ms - -[0m
+[0mGET /csvdata [36m304 [0m11.516 ms - -[0m

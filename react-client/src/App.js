@@ -12,16 +12,28 @@ const colors = [
 class App extends Component {
   state = {
     countries: [],
-    dates: [],
-    cases: [],
-    deaths: [],
-    recovered: [],
-    totals: [],
-    casesDaily: [],
-    deathsDaily: [],
-    recoveredDaily: [],
+    chartData: [
+      {
+        labels: [],
+        dataSet1: [],
+        dataSet2: [],
+        dataSet3: []
+      },
+      {
+        labels: [],
+        dataSet1: [],
+        dataSet2: [],
+        dataSet3: []
+      },
+      {
+        labels: [],
+        dataSet1: [],
+        dataSet2: [],
+        dataSet3: []
+      },
+    ],
     loaderActive: true,
-    shortcutCountries: [
+    btCountries: [
       {"name": "Tunisia"},
       {"name": "Germany"},
       {"name": "Portugal"},
@@ -30,10 +42,17 @@ class App extends Component {
       {"name": "US"},
       {"name": "France"},
       {"name": "Korea"},
+      {"name": "Spain"},
     ]
   }
 
   countryStack = []
+
+  resetbtCountries() {
+    this.state.btCountries.forEach(element => {
+      element.status = false
+    });
+  }
 
   
   getData() {
@@ -49,50 +68,50 @@ class App extends Component {
   
   handleChange = (function(e){
     this.setState({loaderActive: true})
-    //fetch("/csvdata/"+document.getElementById("country").value)
+    
     if (document.getElementById("country").value) {
+      this.resetbtCountries()
       this.countryStack = []
       this.countryStack.push(document.getElementById("country").value)
     }
 
-
     fetch("/csvdata/"+this.countryStack)
-    .then((res) => {return res.json()})
-    .then((res) => {
-      this.changeState (res)
-      this.setState({loaderActive: false})
-    })
+      .then((res) => {return res.json()})
+      .then((res) => {
+        this.changeState (res)
+        this.setState({loaderActive: false})
+      })
   }.bind(this))
 
   handleClickUpdate = (e) =>{
     this.setState({loaderActive: true})
     fetch("/csvdata/?updatedata")
-    .then(res => {return res.json()})
-    .then((res) => {document.getElementById("country").value=""; this.getData()})
+    .then((res) => {return res.json()})
+    .then(() => {document.getElementById("country").value=""; this.getData()})
   }
 
   handleClick (key, country) {
 
-    let temp_ = this.state.shortcutCountries
-    temp_[key] = this.state.shortcutCountries[key]
+    if (document.getElementById("country").value) this.countryStack = []
+
+    let temp_ = this.state.btCountries
+    temp_[key] = this.state.btCountries[key]
     
     let indexElem = this.countryStack.indexOf(country);
     if (indexElem > -1) {
       this.countryStack.splice(indexElem, 1);
       temp_[key].status = false
-      this.setState({shortcutCountries: temp_})
+      this.setState({btCountries: temp_})
     }else {
       this.countryStack.push(country)
       temp_[key].status = true
-      this.setState({shortcutCountries: temp_})
+      this.setState({btCountries: temp_})
     }
     
     console.log(this.countryStack)
 
     document.getElementById("country").value = ""
-    /*console.log(this.countryStack)
-    if (document.getElementById("country").value === country) document.getElementById("country").value = ""
-    else document.getElementById("country").value = country*/
+    
     this.handleChange()
   }
   
@@ -113,15 +132,15 @@ class App extends Component {
 
     
     this.setState({ countries: csvdata[0] }); 
-    this.setState({ dates: csvdata[1] }); 
-    this.setState({ cases: csvdata[2][0] }); 
-    this.setState({ deaths: csvdata[3][0] }); 
-    this.setState({ recovered: csvdata[4][0] }); 
-    this.setState({ totals: [csvdata[2][1], csvdata[3][1], csvdata[4][1] ] }); 
 
-    this.setState({ casesDaily: csvdata[2][2] }); 
-    this.setState({ deathsDaily: csvdata[3][2] }); 
-    this.setState({ recoveredDaily: csvdata[4][2] }); 
+    const chartData = [
+      {labels: csvdata[1], dataSet1: csvdata[2][0], dataSet2: csvdata[3][0], dataSet3: csvdata[4][0]},
+      {labels: csvdata[1], dataSet1: csvdata[2][2], dataSet2: csvdata[3][2], dataSet3: csvdata[4][2]},
+      {labels: [""], dataSet1: [csvdata[2][1]], dataSet2: [csvdata[3][1]], dataSet3: [csvdata[4][1]]}
+    ]
+
+    this.setState({ chartData: chartData }); 
+
     
   }
 
@@ -140,7 +159,7 @@ class App extends Component {
 
           <div className="clear"></div>
 
-          {this.state.shortcutCountries.map((country, key) => 
+          {this.state.btCountries.map((country, key) => 
             <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} />
           )}
 
@@ -150,24 +169,24 @@ class App extends Component {
 
           <div id="totals" className="clear">
             <b>
-            <span style={colors[0]}>Cases: {this.state.totals[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
-            <span style={colors[1]}>Deaths: {this.state.totals[1]}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
-            <span style={colors[2]}>Recovered: {this.state.totals[2]}</span>
+            <span style={colors[0]}>Cases: {this.state.chartData[2].dataSet1[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
+            <span style={colors[1]}>Deaths: {this.state.chartData[2].dataSet2[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
+            <span style={colors[2]}>Recovered: {this.state.chartData[2].dataSet3[0]}</span>
             </b>
           </div>
         </div>
 
         <div className="chart-section">
-          <div className="left clear chart-title">Accumulated:</div>
-          <Chart labels={this.state.dates} cases={this.state.cases} deaths={this.state.deaths} recovered={this.state.recovered} type={"line"} colors={colors} />
-          <div className="left clear chart-title">Daily:</div>
-          <Chart labels={this.state.dates} cases={this.state.casesDaily} deaths={this.state.deathsDaily} recovered={this.state.recoveredDaily} type={"bar"} colors={colors} />
+          <div className="left clear chart-title">Progressive:</div>
+          <Chart labels={this.state.chartData[0].labels} dataSet1={this.state.chartData[0].dataSet1} dataSet2={this.state.chartData[0].dataSet2} dataSet3={this.state.chartData[0].dataSet3} type={"line"} colors={colors} />
 
-          <Chart labels={[""]} cases={[this.state.totals[0]]} deaths={[this.state.totals[1]]} recovered={[this.state.totals[2]]} type={"bar"} colors={colors} />
+          <div className="left clear chart-title">Daily:</div>
+          <Chart labels={this.state.chartData[1].labels} dataSet1={this.state.chartData[1].dataSet1} dataSet2={this.state.chartData[1].dataSet2} dataSet3={this.state.chartData[1].dataSet3} type={"bar"} colors={colors} />
           
+          <div className="left clear chart-title">Accumulated:</div>
+          <Chart labels={this.state.chartData[2].labels} dataSet1={this.state.chartData[2].dataSet1} dataSet2={this.state.chartData[2].dataSet2} dataSet3={this.state.chartData[2].dataSet3} type={"bar"} colors={colors} />
         </div>
 
-        
       </div>
 
     );
