@@ -7,51 +7,45 @@ export default class Graph extends Component {
     myChart = null;
     
 
+    fillChart() {
+        this.myChart.type = this.props.type
+
+        this.myChart.data.labels = this.props.labels
+
+        for (let index = 0; index < this.props.dataSets.length; index++) {
+            this.myChart.data.datasets[index].data = this.props.dataSets[index]
+            this.myChart.data.datasets[index].label = this.props.dataSetsNames[index]
+            this.myChart.data.datasets[index].borderColor = this.props.colors[index].color
+            this.myChart.data.datasets[index].backgroundColor = this.props.colors[index].color
+            
+        }
+    }
+    
+
     componentDidUpdate() {
         
-        this.myChart.data.labels = this.props.labels
-        
-        this.myChart.data.datasets[0].data = this.props.dataSet1
-        this.myChart.data.datasets[1].data = this.props.dataSet2
-        this.myChart.data.datasets[2].data = this.props.dataSet3
-        
+        this.fillChart()
         this.myChart.update()
+        
     }
 
     componentDidMount() {
         //const myChartRef = this.chartRef.current.getContext("2d");
         const myChartRef = this.chartRef.current;
 
-        let datasets = []
         let options = {}
-
-        datasets = [
-            {
-                "label":"Cases",
+        let datasets = []
+        
+        this.props.dataSets.forEach((elem, key) => {
+            datasets[key] = {
+                "label":"",
                 "data":[],
                 "fill":false,
-                "borderColor":this.props.colors[0].color,
-                "backgroundColor":this.props.colors[0].color,
-                "lineTension":0.1
-            },
-            {
-                "label":"Deaths",
-                "data":[],
-                "fill":false,
-                "borderColor":this.props.colors[1].color,
-                "backgroundColor":this.props.colors[1].color,
-                "lineTension":0.1
-            },
-            {
-                "label":"Recovered",
-                "data":[],
-                "fill":false,
-                "borderColor":this.props.colors[2].color,
-                "backgroundColor":this.props.colors[2].color,
+                "borderColor":"",
+                "backgroundColor":"",
                 "lineTension":0.1
             }
-        ]
-            
+        });
 
         this.myChart = new Chart(myChartRef,
         {

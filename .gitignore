@@ -1,5 +1,6 @@
-/react-backend/node_modules
-/react-backend/public/csse_covid_19_time_series/
-/react-client/node_modules
-/react-client/.env
-/react-client/build/
+react-backend/node_modules
+react-backend/public/csse_covid_19_time_series/
+react-client/node_modules
+react-client/.env
+react-client/build/*
+react-backend/nohup.out

@@ -10,27 +10,13 @@ const colors = [
 ]
 
 class App extends Component {
+  
   state = {
     countries: [],
-    chartData: [
-      {
-        labels: [],
-        dataSet1: [],
-        dataSet2: [],
-        dataSet3: []
-      },
-      {
-        labels: [],
-        dataSet1: [],
-        dataSet2: [],
-        dataSet3: []
-      },
-      {
-        labels: [],
-        dataSet1: [],
-        dataSet2: [],
-        dataSet3: []
-      },
+    chart: [
+      {type: "line", dataSetName: [], dataSet: []},
+      {type: "bar", dataSetName: [], dataSet: []},
+      {type: "bar", dataSetName: [], dataSet: []}
     ],
     loaderActive: true,
     btCountries: [
@@ -65,6 +51,13 @@ class App extends Component {
     })
   }
 
+  handleClickUpdate = (e) =>{
+    this.setState({loaderActive: true})
+    fetch("/csvdata/?updatedata")
+    .then((res) => {return res.json()})
+    .then(() => {document.getElementById("country").value=""; this.getData()})
+  }
+
   
   handleChange = (function(e){
     this.setState({loaderActive: true})
@@ -83,16 +76,11 @@ class App extends Component {
       })
   }.bind(this))
 
-  handleClickUpdate = (e) =>{
-    this.setState({loaderActive: true})
-    fetch("/csvdata/?updatedata")
-    .then((res) => {return res.json()})
-    .then(() => {document.getElementById("country").value=""; this.getData()})
-  }
 
   handleClick (key, country) {
 
     if (document.getElementById("country").value) this.countryStack = []
+    document.getElementById("country").value = ""
 
     let temp_ = this.state.btCountries
     temp_[key] = this.state.btCountries[key]
@@ -109,8 +97,6 @@ class App extends Component {
     }
     
     console.log(this.countryStack)
-
-    document.getElementById("country").value = ""
     
     this.handleChange()
   }
@@ -130,16 +116,14 @@ class App extends Component {
       csvdata[4] = [];
     }
 
-    
-    this.setState({ countries: csvdata[0] }); 
-
-    const chartData = [
-      {labels: csvdata[1], dataSet1: csvdata[2][0], dataSet2: csvdata[3][0], dataSet3: csvdata[4][0]},
-      {labels: csvdata[1], dataSet1: csvdata[2][2], dataSet2: csvdata[3][2], dataSet3: csvdata[4][2]},
-      {labels: [""], dataSet1: [csvdata[2][1]], dataSet2: [csvdata[3][1]], dataSet3: [csvdata[4][1]]}
+    const chart = [
+      {title: "Progressive", labels: csvdata[1], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [csvdata[2][0], csvdata[3][0], csvdata[4][0]]},
+      {title: "Daily", labels: csvdata[1], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [csvdata[2][2], csvdata[3][2], csvdata[4][2]]},
+      {title: "Accumulated", labels: [""], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [[csvdata[2][1]], [csvdata[3][1]], [csvdata[4][1]]]}
     ]
 
-    this.setState({ chartData: chartData }); 
+    this.setState({ countries: csvdata[0] }); 
+    this.setState({ chart: chart }); 
 
     
   }
@@ -168,23 +152,24 @@ class App extends Component {
           <div className="clear"></div>
 
           <div id="totals" className="clear">
-            <b>
-            <span style={colors[0]}>Cases: {this.state.chartData[2].dataSet1[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp; 
-            <span style={colors[1]}>Deaths: {this.state.chartData[2].dataSet2[0]}</span>&nbsp;&nbsp;-&nbsp;&nbsp;
-            <span style={colors[2]}>Recovered: {this.state.chartData[2].dataSet3[0]}</span>
-            </b>
+            
+            {this.state.chart[2].dataSetName.map((name, key) => 
+              <span key={key} style={colors[key]}>&bull; {name}: {this.state.chart[2].dataSet[key]}&nbsp;</span>
+            )}
+            
           </div>
         </div>
 
         <div className="chart-section">
-          <div className="left clear chart-title">Progressive:</div>
-          <Chart labels={this.state.chartData[0].labels} dataSet1={this.state.chartData[0].dataSet1} dataSet2={this.state.chartData[0].dataSet2} dataSet3={this.state.chartData[0].dataSet3} type={"line"} colors={colors} />
 
-          <div className="left clear chart-title">Daily:</div>
-          <Chart labels={this.state.chartData[1].labels} dataSet1={this.state.chartData[1].dataSet1} dataSet2={this.state.chartData[1].dataSet2} dataSet3={this.state.chartData[1].dataSet3} type={"bar"} colors={colors} />
+          {this.state.chart.map((elem, key) => 
+            <div key={key}>
+              <div className="left clear chart-title">{elem.title}:</div>
+              <Chart labels={elem.labels} dataSets={[elem.dataSet[0], elem.dataSet[1], elem.dataSet[2]]} dataSetsNames={[elem.dataSetName[0], elem.dataSetName[1], elem.dataSetName[2]]} type={elem.type} colors={colors} />
+            </div>
+          )}
           
-          <div className="left clear chart-title">Accumulated:</div>
-          <Chart labels={this.state.chartData[2].labels} dataSet1={this.state.chartData[2].dataSet1} dataSet2={this.state.chartData[2].dataSet2} dataSet3={this.state.chartData[2].dataSet3} type={"bar"} colors={colors} />
+          
         </div>
 
       </div>
