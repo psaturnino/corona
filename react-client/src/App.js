@@ -14,7 +14,7 @@ class App extends Component {
   state = {
     countries: [],
     chart: [
-      {type: "line", dataSetName: [], dataSet: []},
+      {type: "bar", dataSetName: [], dataSet: []},
       {type: "bar", dataSetName: [], dataSet: []},
       {type: "bar", dataSetName: [], dataSet: []}
     ],
@@ -41,41 +41,97 @@ class App extends Component {
   }
 
   
-  getData() {
+  getData(update=false, countries=[]) {
     this.setState({loaderActive: true})
-    fetch("/csvdata")
+    
+    let url = "/csvdata"
+    if (update) url = "/csvdata/?updatedata"
+    if (countries) url = "/csvdata/"+countries
+
+    fetch(url)
     .then((res) => {return res.json()})
     .then((res) => {
-      this.changeState (res);
+      if (update) document.getElementById("country").value="";
+
+      if (!res.length) {
+        res = [];
+        res[0] = [];
+        res[1] = [];
+        res[2] = [];
+        res[3] = [];
+        res[4] = [];
+      }
+
+      
+      const temp = res
+
+      temp[2][0] = res[2][0][0]
+      temp[2][1] = res[2][1][0]
+      temp[2][2] = res[2][2][0]
+
+      temp[3][0] = res[3][0][0]
+      temp[3][1] = res[3][1][0]
+      temp[3][2] = res[3][2][0]
+
+      temp[4][0] = res[4][0][0]
+      temp[4][1] = res[4][1][0]
+      temp[4][2] = res[4][2][0]
+
+      const title = [
+        ["Accumulated"],
+        ["Daily increase"],
+        ["Total"]
+      ]
+
+      const labels = [
+        temp[1],
+        temp[1],
+        [""]
+      ]
+
+      const dataSetName = [
+        ["Cases", "Deaths", "Recovered"],
+        ["Cases", "Deaths", "Recovered"],
+        ["Cases", "Deaths", "Recovered"]
+      ]
+
+      const dataSet = [
+        [temp[2][0], temp[3][0], temp[4][0]],
+        [temp[2][1], temp[3][1], temp[4][1]],
+        [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
+
+      ]
+
+      const chart = []
+      for (let index = 0; index < 3; index++) {
+        chart[index] = {
+          title: title[index], 
+          labels: labels[index], 
+          dataSetName: dataSetName[index], 
+          dataSet: dataSet[index]
+        }
+        
+      }
+
+      this.changeState (temp[0], chart);
       this.setState({loaderActive: false})
     })
   }
 
-  handleClickUpdate = (e) =>{
-    this.setState({loaderActive: true})
-    fetch("/csvdata/?updatedata")
-    .then((res) => {return res.json()})
-    .then(() => {document.getElementById("country").value=""; this.getData()})
+  handleClickUpdate = (e) => {
+    this.getData(true)
   }
 
-  
   handleChange = (function(e){
-    this.setState({loaderActive: true})
-    
     if (document.getElementById("country").value) {
       this.resetbtCountries()
       this.countryStack = []
       this.countryStack.push(document.getElementById("country").value)
     }
 
-    fetch("/csvdata/"+this.countryStack)
-      .then((res) => {return res.json()})
-      .then((res) => {
-        this.changeState (res)
-        this.setState({loaderActive: false})
-      })
-  }.bind(this))
+    this.getData(false, this.countryStack)
 
+  }.bind(this))
 
   handleClick (key, country) {
 
@@ -96,8 +152,6 @@ class App extends Component {
       this.setState({btCountries: temp_})
     }
     
-    console.log(this.countryStack)
-    
     this.handleChange()
   }
   
@@ -106,26 +160,13 @@ class App extends Component {
     this.getData()
   }
 
-  changeState (csvdata) {
-    if (!csvdata.length) {
-      csvdata = [];
-      csvdata[0] = [];
-      csvdata[1] = [];
-      csvdata[2] = [];
-      csvdata[3] = [];
-      csvdata[4] = [];
-    }
+  changeState (countries, chart) {
+    
+    
 
-    const chart = [
-      {title: "Progressive", labels: csvdata[1], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [csvdata[2][0], csvdata[3][0], csvdata[4][0]]},
-      {title: "Daily", labels: csvdata[1], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [csvdata[2][2], csvdata[3][2], csvdata[4][2]]},
-      {title: "Accumulated", labels: [""], dataSetName: ["Cases", "Deaths", "Recovered"], dataSet: [[csvdata[2][1]], [csvdata[3][1]], [csvdata[4][1]]]}
-    ]
-
-    this.setState({ countries: csvdata[0] }); 
+    this.setState({ countries: countries }); 
     this.setState({ chart: chart }); 
 
-    
   }
 
   render() {

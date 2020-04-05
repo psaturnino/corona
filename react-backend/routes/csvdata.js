@@ -5,8 +5,8 @@ const https = require('https');
 
 
 function download(url, dest, callback) {
-  var file = fs.createWriteStream(dest);
-  var request = https.get(url, function (response) {
+  const file = fs.createWriteStream(dest);
+  https.get(url, function (response) {
       response.pipe(file);
       file.on('finish', function () {
           file.close(callback); // close() is async, call callback after close completes.
@@ -28,7 +28,7 @@ class CSVData {
   startAt = 0;
 
   constructor (countries) {
-    if (!countries) countries = []
+    if (!countries) countries = ["all"]
     this.countries = countries
     this.startAt = 30
   }
@@ -44,20 +44,14 @@ class CSVData {
 
     let i = 0;
     let element_ = [], countries = []
-    let countryName = ""
-  
+    
     stack.forEach(element => {
       
       element = element.replace("\"", "")
       element_ = element.split(",")
   
       if (i && element_[1]) {
-        
-        countryName = element_[1]/*+(element_[0]?" - "+element_[0]:"")*/
-        if (countries.indexOf(countryName) == -1) countries.push(countryName)
-        
-        /*countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
-        country.push(countryName)*/
+        if (countries.indexOf(element_[1]) == -1) countries.push(element_[1])
       }
       i++;
   
@@ -68,6 +62,8 @@ class CSVData {
 
   getDays(stack) {
 
+    let days = [], j=0, i=0
+    
     let element_ = stack[0].split(",")
     
     element_.shift()
@@ -75,9 +71,6 @@ class CSVData {
     element_.shift()
     element_.shift()
   
-    let days = []
-    
-    let j=0, i=0
     element_.forEach(elem => {
       if (j >= this.startAt) { 
         elem = elem.split("/")
@@ -91,19 +84,22 @@ class CSVData {
   }
 
   getDailyAmount(stack) {
-    let element_ = [], results = [], dailyIncrease = []
-    let j = 0, current = 0, totals = 0, i=0, lastcurrent=0;
-    let countryName = ""
-  
-    stack.forEach(element => {
-        element = element.replace("\"", "")
-        element_ = element.split(",")
-  
-        //countryName = element_[1]+(element_[0]?" - "+element_[0]:"")
+    let element_ = []
+    let j = 0, current = 0, i=0, c=0, lastcurrent=0;
+    
+    let stackResults = [], stackTotals = [], stackDailyIncrease = []
+    
+    this.countries.forEach(country => {
+
+      stackResults[c] = []
+      stackTotals[c] = 0
+      
+      stack.forEach(element => {
+
+        element_ = element.replace("\"", "").split(",")
         
-        countryName = element_[1]
-        
-        if ((this.countries && countryName == this.countries[0]) || !this.countries.length) {
+        if ((element_[1] == country) || country == "all") {
+
           element_.shift()
           element_.shift()
           element_.shift()
@@ -114,30 +110,39 @@ class CSVData {
           
           element_.forEach(elem => {
             if (j >= this.startAt) { 
-              if (!results[i]) results[i] = 0
+              if (!stackResults[c][i]) stackResults[c][i] = 0
               
               current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
 
-              results[i] += current
+              stackResults[c][i] += current
               
-              if (j == (element_.length-1)) totals += current
+              if (j == (element_.length-1)) {
+                stackTotals[c] += current
+              }
               i++;
             }
             j++;
           });
-  
         }
+      });
+      c++
     });
 
-    i=0
-    results.forEach(elem => {
-      current = elem
-      dailyIncrease[i] = (current - lastcurrent)>0?(current - lastcurrent):0
-      lastcurrent = current
-      i++
-    })
-  
-    return [results, totals, dailyIncrease]
+    console.log(stackTotals)
+    stackResults.forEach((element, key) => {
+      stackDailyIncrease[key] = [];
+      i=0
+      element.forEach(elem => {
+        current = elem
+        stackDailyIncrease[key][i] = (current - lastcurrent)>0?(current - lastcurrent):0
+        lastcurrent = current
+        i++
+      });
+    });
+
+    
+    
+    return [stackResults, stackDailyIncrease, stackTotals]
   }
 
   updateData(callback) {
@@ -171,13 +176,14 @@ class CSVData {
     dataArrayTotalRecovered.shift()
   
     
-  
     data[0] = this.getCountries(dataArrayTotalCases)
     data[1] = this.getDays(dataArrayTotalCases)
-  
+    
     data[2] = this.getDailyAmount(dataArrayTotalCases)
     data[3] = this.getDailyAmount(dataArrayTotalDeaths)
     data[4] = this.getDailyAmount(dataArrayTotalRecovered)
+
+    data[5] = this.countries
     
     return data
   }
@@ -186,37 +192,33 @@ class CSVData {
 
 
 
-
-
-
-
 router.get('/:id', function(req, res, next) {
   
   const params = req.params.id.split(",")
   CSVData_ = new CSVData(params);
 
-  let result = CSVData_.getCsvData()
+  const result = CSVData_.getCsvData()
   res.send(JSON.stringify(result))
   return;
+  
 })
 
 router.get('/', function(req, res, next) {
 
   CSVData_ = new CSVData();
-
+  
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {
       let result = (CSVData_.getCsvData())
       res.send(JSON.stringify(result))
     })
-  }else {
-    let result = (CSVData_.getCsvData())
-    res.send(JSON.stringify(result))
+    return;
   }
-
+  
+  const result = (CSVData_.getCsvData())
+  res.send(JSON.stringify(result))
   return;
   
 });
 
 module.exports = router;
- 
