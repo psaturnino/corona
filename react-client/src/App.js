@@ -46,7 +46,7 @@ class App extends Component {
     
     let url = "/csvdata"
     if (update) url = "/csvdata/?updatedata"
-    if (countries) url = "/csvdata/"+countries
+    if (countries.length) url = "/csvdata/"+countries
 
     fetch(url)
     .then((res) => {return res.json()})
@@ -62,7 +62,7 @@ class App extends Component {
         res[4] = [];
       }
 
-      
+
       const temp = res
 
       temp[2][0] = res[2][0][0]
@@ -76,6 +76,7 @@ class App extends Component {
       temp[4][0] = res[4][0][0]
       temp[4][1] = res[4][1][0]
       temp[4][2] = res[4][2][0]
+
 
       const title = [
         ["Accumulated"],
