@@ -53,69 +53,70 @@ class App extends Component {
     .then((res) => {
       if (update) document.getElementById("country").value="";
 
-      if (!res.length) {
-        res = [];
-        res[0] = [];
-        res[1] = [];
-        res[2] = [];
-        res[3] = [];
-        res[4] = [];
-      }
-
-
-      const temp = res
-
-      temp[2][0] = res[2][0][0]
-      temp[2][1] = res[2][1][0]
-      temp[2][2] = res[2][2][0]
-
-      temp[3][0] = res[3][0][0]
-      temp[3][1] = res[3][1][0]
-      temp[3][2] = res[3][2][0]
-
-      temp[4][0] = res[4][0][0]
-      temp[4][1] = res[4][1][0]
-      temp[4][2] = res[4][2][0]
-
-
-      const title = [
-        ["Accumulated"],
-        ["Daily increase"],
-        ["Total"]
-      ]
-
-      const labels = [
-        temp[1],
-        temp[1],
-        [""]
-      ]
-
-      const dataSetName = [
-        ["Cases", "Deaths", "Recovered"],
-        ["Cases", "Deaths", "Recovered"],
-        ["Cases", "Deaths", "Recovered"]
-      ]
-
-      const dataSet = [
-        [temp[2][0], temp[3][0], temp[4][0]],
-        [temp[2][1], temp[3][1], temp[4][1]],
-        [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
-
-      ]
-
-      const chart = []
-      for (let index = 0; index < 3; index++) {
-        chart[index] = {
-          title: title[index], 
-          labels: labels[index], 
-          dataSetName: dataSetName[index], 
-          dataSet: dataSet[index]
+        if (!res.length) {
+          res = [];
+          res[0] = [];
+          res[1] = [];
+          res[2] = [];
+          res[3] = [];
+          res[4] = [];
         }
-        
-      }
 
-      this.changeState (temp[0], chart);
-      this.setState({loaderActive: false})
+
+        const temp = res
+
+        temp[2][0] = res[2][0][0]
+        temp[2][1] = res[2][1][0]
+        temp[2][2] = res[2][2][0]
+
+        temp[3][0] = res[3][0][0]
+        temp[3][1] = res[3][1][0]
+        temp[3][2] = res[3][2][0]
+
+        temp[4][0] = res[4][0][0]
+        temp[4][1] = res[4][1][0]
+        temp[4][2] = res[4][2][0]
+
+
+        const title = [
+          ["Accumulated"],
+          ["Daily increase"],
+          ["Total"]
+        ]
+
+        const labels = [
+          temp[1],
+          temp[1],
+          [""]
+        ]
+
+        const dataSetName = [
+          ["Cases", "Deaths", "Recovered"],
+          ["Cases", "Deaths", "Recovered"],
+          ["Cases", "Deaths", "Recovered"]
+        ]
+
+        const dataSet = [
+          [temp[2][0], temp[3][0], temp[4][0]],
+          [temp[2][1], temp[3][1], temp[4][1]],
+          [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
+
+        ]
+
+        const chart = []
+        for (let index = 0; index < 3; index++) {
+          chart[index] = {
+            title: title[index], 
+            labels: labels[index], 
+            dataSetName: dataSetName[index], 
+            dataSet: dataSet[index]
+          }
+          
+        }
+
+        this.changeState (temp[0], chart);
+        this.setState({loaderActive: false})
+      
     })
   }
 

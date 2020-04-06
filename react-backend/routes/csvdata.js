@@ -13,8 +13,7 @@ function download(url, dest, callback) {
       });
       file.on('error', function (err) {
           fs.unlink(dest); // Delete the file async. (But we don't check the result)
-          if (callback)
-              callback(err.message);
+          
       });
   });
 }
@@ -147,10 +146,10 @@ class CSVData {
 
   updateData(callback) {
     download(this.remoteFiles[0], this.localFiles[0],
-      download(this.remoteFiles[1], this.localFiles[1],
-        download(this.remoteFiles[2], this.localFiles[2], callback)
+     () => {download(this.remoteFiles[1], this.localFiles[1],
+        () => {download(this.remoteFiles[2], this.localFiles[2], () => {callback()})}
       )
-    )
+    })
   }
 
   getCsvData() {
@@ -209,8 +208,10 @@ router.get('/', function(req, res, next) {
   
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {
-      let result = (CSVData_.getCsvData())
-      res.send(JSON.stringify(result))
+      
+        let result = (CSVData_.getCsvData())
+        res.send(JSON.stringify(result))
+      
     })
     return;
   }
