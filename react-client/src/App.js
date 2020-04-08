@@ -3,21 +3,11 @@ import './App.css';
 import Chart from './Chart';
 import Loader from './Loader';
 
-const colors = [
-  {"color": "#b0b3fc"},
-  {"color": "#f77373"},
-  {"color": "#337e50"}
-]
 
 class App extends Component {
   
   state = {
     countries: [],
-    chart: [
-      {type: "bar", dataSetName: [], dataSet: []},
-      {type: "bar", dataSetName: [], dataSet: []},
-      {type: "bar", dataSetName: [], dataSet: []}
-    ],
     loaderActive: true,
     btCountries: [
       {"name": "Tunisia"},
@@ -29,9 +19,20 @@ class App extends Component {
       {"name": "France"},
       {"name": "Korea"},
       {"name": "Spain"},
+    ],
+    chart: [
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
     ]
   }
 
+  
+  colors = [
+    {"color": "#b0b3fc"},
+    {"color": "#f77373"},
+    {"color": "#337e50"} 
+  ]
   countryStack = []
 
   resetbtCountries() {
@@ -53,17 +54,58 @@ class App extends Component {
     .then((res) => {
       if (update) document.getElementById("country").value="";
 
-        if (!res.length) {
-          res = [];
-          res[0] = [];
-          res[1] = [];
-          res[2] = [];
-          res[3] = [];
-          res[4] = [];
-        }
+      if (!res.length) {
+        res = [];
+        res[0] = []; //all countries
+        res[1] = []; //days
+        res[2] = []; //cases
+        res[3] = []; //deaths
+        res[4] = []; //recovered
+        res[5] = []; //selected countries
+      }
 
+      const temp = res
+      let chartTitle = []
+      let labels = []
+      let dataSetName = []
+      let dataSet = []
 
-        const temp = res
+      if (temp[5].length > 1) {
+
+        chartTitle = [
+          "Cases Accumulated",
+          "Deaths Accumulated",
+          "Recovered Accumulated"
+        ]
+        
+        labels = [
+          temp[1],
+          temp[1],
+          temp[1],
+        ]
+        dataSetName[0] = []; dataSetName[1] = []; dataSetName[2] = []
+        dataSet[0] = []; dataSet[1] = []; dataSet[2] = []
+        
+        temp[5].forEach((country_, key) => {
+          
+          dataSetName[0].push(country_)
+          dataSetName[1].push(country_)
+          dataSetName[2].push(country_)
+
+          //0 accumulted, 1 daily, 2 total
+          dataSet[0].push(temp[2][0][key])
+          dataSet[1].push(temp[3][0][key])
+          dataSet[2].push(temp[4][0][key])
+        });
+
+        /*dataSet = [
+          [temp[2][0], temp[3][0], temp[4][0]],
+          [temp[2][1], temp[3][1], temp[4][1]],
+          [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
+  
+        ]*/
+
+      }else {
 
         temp[2][0] = res[2][0][0]
         temp[2][1] = res[2][1][0]
@@ -77,45 +119,53 @@ class App extends Component {
         temp[4][1] = res[4][1][0]
         temp[4][2] = res[4][2][0]
 
-
-        const title = [
-          ["Accumulated"],
-          ["Daily increase"],
-          ["Total"]
+        chartTitle = [
+          "Accumulated",
+          "Daily increase",
+          "Total"
         ]
 
-        const labels = [
+        labels = [
           temp[1],
           temp[1],
           [""]
         ]
 
-        const dataSetName = [
+        dataSetName = [
           ["Cases", "Deaths", "Recovered"],
           ["Cases", "Deaths", "Recovered"],
           ["Cases", "Deaths", "Recovered"]
         ]
 
-        const dataSet = [
+        dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
           [temp[2][1], temp[3][1], temp[4][1]],
           [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
-
+  
         ]
+      }
 
-        const chart = []
-        for (let index = 0; index < 3; index++) {
-          chart[index] = {
-            title: title[index], 
-            labels: labels[index], 
-            dataSetName: dataSetName[index], 
-            dataSet: dataSet[index]
-          }
-          
+      
+      const chart = []
+      
+      for (let index = 0; index < dataSet.length; index++) {
+
+        chart[index] = {
+          type: (this.countryStack.length > 1)?"line":"bar",
+          title: chartTitle[index], 
+          labels: labels[index], 
+          dataSetName: dataSetName[index], 
+          dataSet: dataSet[index]
         }
 
-        this.changeState (temp[0], chart);
-        this.setState({loaderActive: false})
+        if (dataSet.length > 2) this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
+        
+      }
+
+      this.setState({ countries: temp[0], chart: chart }); 
+      this.setState({loaderActive: false})
+
+      
       
     })
   }
@@ -160,18 +210,22 @@ class App extends Component {
 
   componentDidMount() {
     this.getData()
+    
   }
 
-  changeState (countries, chart) {
     
-    
-
-    this.setState({ countries: countries }); 
-    this.setState({ chart: chart }); 
-
-  }
-
   render() {
+
+    let totals = [];
+    
+    if (this.countryStack.length <= 1) {
+      this.state.chart[2].dataSetName.map((name, key) => 
+        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.state.chart[2].dataSet[key]}&nbsp;</span>)
+      )
+    }
+
+    
+    
     return (
       <div className="App">
         <div className="header">
@@ -195,9 +249,9 @@ class App extends Component {
           <div className="clear"></div>
 
           <div id="totals" className="clear">
-            
-            {this.state.chart[2].dataSetName.map((name, key) => 
-              <span key={key} style={colors[key]}>&bull; {name}: {this.state.chart[2].dataSet[key]}&nbsp;</span>
+          
+            {totals.map((total) => 
+              total
             )}
             
           </div>
@@ -208,7 +262,7 @@ class App extends Component {
           {this.state.chart.map((elem, key) => 
             <div key={key}>
               <div className="left clear chart-title">{elem.title}:</div>
-              <Chart labels={elem.labels} dataSets={[elem.dataSet[0], elem.dataSet[1], elem.dataSet[2]]} dataSetsNames={[elem.dataSetName[0], elem.dataSetName[1], elem.dataSetName[2]]} type={elem.type} colors={colors} />
+              <Chart labels={elem.labels} dataSets={elem.dataSet} dataSetsNames={elem.dataSetName} type={elem.type} colors={this.colors} />
             </div>
           )}
           
