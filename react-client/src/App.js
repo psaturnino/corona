@@ -40,6 +40,7 @@ class App extends Component {
     this.state.btCountries.forEach(element => {
       element.status = false
     });
+    this.countryStack = []
   }
 
   
@@ -49,7 +50,7 @@ class App extends Component {
     let url = "/csvdata"
     if (update) url = "/csvdata/?updatedata"
     if (countries.length) url = "/csvdata/"+countries
-
+    
     fetch(url)
     .then((res) => {return res.json()})
     .then((res) => {
@@ -140,6 +141,7 @@ class App extends Component {
           ["Cases", "Deaths", "Recovered"],
           ["Cases", "Deaths", "Recovered"]
         ]
+        
 
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
@@ -147,6 +149,8 @@ class App extends Component {
           [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
   
         ]
+
+        this.totals_ = dataSet[2]
 
         
       }
@@ -167,7 +171,7 @@ class App extends Component {
         if (dataSet.length > 2) this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
         
       }
-
+      
       this.setState({ countries: temp[0], chart: chart }); 
       this.setState({loaderActive: false})
 
@@ -177,13 +181,13 @@ class App extends Component {
   }
 
   handleClickUpdate = (e) => {
+    this.resetbtCountries()
     this.getData(true)
   }
 
   handleChange = (function(e){
     if (document.getElementById("country").value) {
       this.resetbtCountries()
-      this.countryStack = []
       this.countryStack.push(document.getElementById("country").value)
     }
 
@@ -226,7 +230,7 @@ class App extends Component {
     
     if (this.countryStack.length <= 1) {
       this.state.chart[2].dataSetName.map((name, key) => 
-        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.state.chart[2].dataSet[key]}&nbsp;</span>)
+        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.totals_[key]}&nbsp;</span>)
       )
     }else {
       
