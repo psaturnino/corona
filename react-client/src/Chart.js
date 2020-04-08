@@ -13,7 +13,7 @@ export default class Graph extends Component {
         
         if (this.myChart) this.myChart.destroy()
 
-        let options = {}
+        
         let datasets = []
         
         this.props.dataSets.forEach((elem, key) => {
@@ -22,10 +22,11 @@ export default class Graph extends Component {
                 "data":[],
                 "fill":false,
                 "borderColor":this.props.colors[key].color,
-                "backgroundColor":this.props.colors[key].color,
-                "lineTension":0.1
+                "backgroundColor":this.props.colors[key].color
             }
         });
+
+        
 
         this.myChart = new Chart(myChartRef,
         {
@@ -34,7 +35,11 @@ export default class Graph extends Component {
                 "labels":[],
                 "datasets": datasets
             },
-            "options": options
+            "options": {
+                animation: {
+                    onComplete: () => {}
+                }
+            }
         });
 
         

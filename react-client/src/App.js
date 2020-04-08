@@ -34,6 +34,7 @@ class App extends Component {
     {"color": "#337e50"} 
   ]
   countryStack = []
+  totals_ = []
 
   resetbtCountries() {
     this.state.btCountries.forEach(element => {
@@ -105,6 +106,9 @@ class App extends Component {
   
         ]*/
 
+        
+        this.totals_ = temp[2][2]
+
       }else {
 
         temp[2][0] = res[2][0][0]
@@ -143,6 +147,8 @@ class App extends Component {
           [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
   
         ]
+
+        
       }
 
       
@@ -221,6 +227,11 @@ class App extends Component {
     if (this.countryStack.length <= 1) {
       this.state.chart[2].dataSetName.map((name, key) => 
         totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.state.chart[2].dataSet[key]}&nbsp;</span>)
+      )
+    }else {
+      
+      this.state.chart[0].dataSetName.map((name, key) => 
+        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.totals_[key]}&nbsp;</span>)
       )
     }
 
