@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import Chart from './Components/Chart.jsx';
-import Loader from './Components/Loader.jsx';
+import Chart from './Chart';
+import Loader from './Loader';
 
 
 class App extends Component {
@@ -242,16 +242,24 @@ class App extends Component {
     
     
     return (
+      
       <div className="App">
         <div className="header">
-          <select id="country" onChange={this.handleChange}>
-            <option value="">Countries</option>
-            {this.state.countries.map((country, key) =>
-              <option key={"country"+key} value={country}>{country}</option>
-            )}
-          </select> 
+          <div className="form-group row">
+            <div className="col-sm-4">
+              <select id="country" onChange={this.handleChange} className="form-control">
+                <option value="">Countries</option>
+                {this.state.countries.map((country, key) =>
+                  <option key={"country"+key} value={country}>{country}</option>
+                )}
+              </select>
+            </div>
+            <div className="col-sm-8">
+              <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
+            </div>
+          </div>
           
-          <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
+          
 
           <div className="clear"></div>
 
@@ -291,7 +299,7 @@ class App extends Component {
 }
 
 const ButtonCountry = ({status, name, handleClick}) => (
- <div className={status?"shortcut-countries sel":"shortcut-countries"} onClick={handleClick}>{name}</div>
+ <div className={`btn btn-sm mr-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
 );
   
 export default App;

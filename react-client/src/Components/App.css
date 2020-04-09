@@ -1,8 +1,7 @@
 .App {text-align: center;width:100%;margin:0 auto;}
-#country, .shortcut-countries {float:left; }
+#country {float:left; }
 #country {margin-top:10px; margin-left:5px}
-.shortcut-countries {border-radius: 5px; padding:5px; padding-left: 10px; padding-right: 10px; margin-left:5px; cursor: pointer; background-color: #d8d8d8 }
-.shortcut-countries.sel{background-color: #b0b3fc;}
+
 .linkupdate{cursor: pointer; float:right}
 #totals {margin-top:10px}
 #myChart{max-height:650px}
@@ -11,3 +10,5 @@
 .header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
 .chart-title{margin-top:30px}
 .chart-section{width:95%; margin: 0 auto; padding-top: 140px;}
+
+.btn{margin-left:5px}
