@@ -276,6 +276,12 @@ class App extends Component {
     }
   }
 
+  customizeCountries() {
+    if (!this.state.remCountries) 
+      this.setState({remCountries: true})
+    else this.setState({remCountries: false})
+  }
+
     
   render() {
 
@@ -310,7 +316,7 @@ class App extends Component {
               
               <div className="col">
                 <div className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</div>
-                <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{if (!this.state.remCountries) {this.setState({remCountries: true})} else {this.setState({remCountries: false})}}}>Rem</div>
+                <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{this.customizeCountries()}}>Rem</div>
                 {/*<div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>*/}
                 
                 
