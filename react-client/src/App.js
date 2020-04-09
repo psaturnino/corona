@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import Chart from './Chart';
-import Loader from './Loader';
+import Chart from './Components/Chart.jsx';
+import Loader from './Components/Loader.jsx';
 
 
 class App extends Component {
