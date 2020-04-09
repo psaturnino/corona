@@ -231,11 +231,6 @@ class App extends Component {
   }
   
 
-  componentDidMount() {
-    this.getData()
-    this.adjustContentSize()  
-  }
-
   adjustContentSize() {
     const h_elem = this.headerRef.current
     const c_elem = this.chartRef.current
@@ -255,7 +250,7 @@ class App extends Component {
     let temp_ = this.state.btCountries
     
     temp_.splice(key, 1);
-    this.setState({btCountries: temp_}, this.adjustContentSize)
+    this.setState({btCountries: temp_})
     this.countryStack = []
     
     //save in cookies
@@ -264,12 +259,17 @@ class App extends Component {
   addCountry() {
     const c = document.getElementById("country").value
     if (c) {
-      console.log(this.state.btCountries)
-      if (this.state.btCountries.indexOf(c) === -1) {
+      
+      let exists = false
+      this.state.btCountries.forEach(element => {
+        if (element.name === c) {exists = true; return;}
+      });
+      
+      if (!exists) {
         const new_c = {name: c, status: true}
         const temp_ = this.state.btCountries;
         temp_.push(new_c)
-        this.setState({btCountries: temp_}, this.adjustContentSize)
+        this.setState({btCountries: temp_})
         document.getElementById("country").value = ""
       }
       //save in cookies
@@ -280,6 +280,15 @@ class App extends Component {
     if (!this.state.remCountries) 
       this.setState({remCountries: true})
     else this.setState({remCountries: false})
+  }
+
+  componentDidMount() {
+    this.getData()
+    
+  }
+
+  componentDidUpdate() {
+    this.adjustContentSize()  
   }
 
     
@@ -318,6 +327,7 @@ class App extends Component {
                 <div className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</div>
                 <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{this.customizeCountries()}}>Customize</div>
                 {/*<div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>*/}
+                <div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{}}>Save</div>
                 
                 
               </div>
