@@ -197,6 +197,8 @@ class App extends Component {
       this.countryStack.push(document.getElementById("country").value)
     }
 
+    this.addCountry()
+
     this.getData(false, this.countryStack)
 
   }.bind(this))
@@ -268,6 +270,7 @@ class App extends Component {
         const temp_ = this.state.btCountries;
         temp_.push(new_c)
         this.setState({btCountries: temp_}, this.adjustContentSize)
+        document.getElementById("country").value = ""
       }
       //save in cookies
     }
@@ -308,7 +311,7 @@ class App extends Component {
               <div className="col">
                 <div className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</div>
                 <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{if (!this.state.remCountries) {this.setState({remCountries: true})} else {this.setState({remCountries: false})}}}>Rem</div>
-                <div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>
+                {/*<div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>*/}
                 
                 
               </div>
