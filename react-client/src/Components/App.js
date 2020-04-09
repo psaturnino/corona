@@ -4,8 +4,12 @@ import Chart from './Chart';
 import Loader from './Loader';
 
 
+
 class App extends Component {
   
+  headerRef = React.createRef();
+  chartRef = React.createRef();
+
   state = {
     countries: [],
     loaderActive: true,
@@ -43,6 +47,7 @@ class App extends Component {
     this.countryStack = []
   }
 
+  
   
   getData(update=false, countries=[]) {
     this.setState({loaderActive: true})
@@ -220,7 +225,15 @@ class App extends Component {
 
   componentDidMount() {
     this.getData()
-    
+
+    const h_elem = this.headerRef.current
+    const c_elem = this.chartRef.current
+
+    window.addEventListener("resize", () => {
+      c_elem.style.paddingTop=getComputedStyle(h_elem).height
+    })
+
+    c_elem.style.paddingTop=getComputedStyle(h_elem).height
   }
 
     
@@ -242,9 +255,8 @@ class App extends Component {
     
     
     return (
-      
       <div className="App">
-        <div className="header">
+        <div className="header" ref={this.headerRef}>
           <div className="container">
             <div className="row mb-2">
               <div className="col-sm-6">
@@ -282,7 +294,7 @@ class App extends Component {
 
         <Loader active={this.state.loaderActive} />
 
-        <div className="chart-section">
+        <div className="chart-section" ref={this.chartRef}>
           {this.state.chart.map((elem, key) => 
             <div key={key}>
               <div className="left clear chart-title">{elem.title}:</div>
@@ -295,6 +307,8 @@ class App extends Component {
     );
   }
 }
+
+
 
 const ButtonCountry = ({status, name, handleClick}) => (
  <div className={`btn btn-sm mr-1 mt-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
