@@ -245,61 +245,59 @@ class App extends Component {
       
       <div className="App">
         <div className="header">
-          <div className="form-group row">
-            <div className="col-sm-4">
-              <select id="country" onChange={this.handleChange} className="form-control">
-                <option value="">Countries</option>
-                {this.state.countries.map((country, key) =>
-                  <option key={"country"+key} value={country}>{country}</option>
-                )}
-              </select>
+          <div className="container">
+            <div className="row mb-2">
+              <div className="col-sm-6">
+                <select id="country" onChange={this.handleChange} className="form-control mt-2">
+                  <option value="">Countries</option>
+                  {this.state.countries.map((country, key) =>
+                    <option key={"country"+key} value={country}>{country}</option>
+                  )}
+                </select>
+              </div>
+              <div className="col-sm-6">
+                <div className="btn btn-primary float-right mt-2" onClick={this.handleClickUpdate}>update CSV</div>
+              </div>
             </div>
-            <div className="col-sm-8">
-              <div className="linkupdate" onClick={this.handleClickUpdate}>Get New Data from Server<br />(John Hopkins)</div>
+
+            <div className="row">
+              <div className="col">
+              {this.state.btCountries.map((country, key) => 
+                <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} />
+              )}
+              </div>
             </div>
-          </div>
-          
-          
 
-          <div className="clear"></div>
-
-          {this.state.btCountries.map((country, key) => 
-            <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} />
-          )}
-
-          <Loader active={this.state.loaderActive} />
-
-          <div className="clear"></div>
-
-          <div id="totals" className="clear">
-          
-            {totals.map((total) => 
-              total
-            )}
+            <div className="row">
+              <div id="totals" className="col">
             
+                {totals.map((total) => 
+                  total
+                )}
+                
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="chart-section">
+        <Loader active={this.state.loaderActive} />
 
+        <div className="chart-section">
           {this.state.chart.map((elem, key) => 
             <div key={key}>
               <div className="left clear chart-title">{elem.title}:</div>
               <Chart labels={elem.labels} dataSets={elem.dataSet} dataSetsNames={elem.dataSetName} type={elem.type} colors={this.colors} />
             </div>
           )}
-          
-          
         </div>
 
       </div>
-
     );
   }
 }
 
 const ButtonCountry = ({status, name, handleClick}) => (
- <div className={`btn btn-sm mr-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
+ <div className={`btn btn-sm mr-1 mt-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
 );
   
 export default App;

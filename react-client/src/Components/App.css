@@ -1,8 +1,7 @@
 .App {text-align: center;width:100%;margin:0 auto;}
-#country {float:left; }
-#country {margin-top:10px; margin-left:5px}
 
-.linkupdate{cursor: pointer; float:right}
+
+
 #totals {margin-top:10px}
 #myChart{max-height:650px}
 .left{float:left}
