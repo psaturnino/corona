@@ -12,6 +12,7 @@ class App extends Component {
 
   state = {
     countries: [],
+    remCountries: false,
     loaderActive: true,
     btCountries: [
       {"name": "Tunisia"},
@@ -202,6 +203,11 @@ class App extends Component {
 
   handleClick (key, country) {
 
+    if (this.state.remCountries) {
+      this.removeCountry(key)
+      return;
+    }
+
     if (document.getElementById("country").value) this.countryStack = []
     document.getElementById("country").value = ""
 
@@ -225,15 +231,46 @@ class App extends Component {
 
   componentDidMount() {
     this.getData()
+    this.adjustContentSize()  
+  }
 
+  adjustContentSize() {
     const h_elem = this.headerRef.current
     const c_elem = this.chartRef.current
+    const fnChangeSize = () => {c_elem.style.paddingTop=getComputedStyle(h_elem).height}
 
     window.addEventListener("resize", () => {
-      c_elem.style.paddingTop=getComputedStyle(h_elem).height
+      fnChangeSize()
     })
 
-    c_elem.style.paddingTop=getComputedStyle(h_elem).height
+    fnChangeSize()
+  }
+
+  removeCountry(key) {
+
+    this.resetbtCountries()
+
+    let temp_ = this.state.btCountries
+    
+    temp_.splice(key, 1);
+    this.setState({btCountries: temp_}, this.adjustContentSize)
+    this.countryStack = []
+    
+    //save in cookies
+  }
+
+  addCountry() {
+    const c = document.getElementById("country").value
+    if (c) {
+      console.log(this.state.btCountries)
+      if (this.state.btCountries.indexOf(c) === -1) {
+        const new_c = {name: c, status: true}
+        const temp_ = this.state.btCountries;
+        temp_.push(new_c)
+        this.setState({btCountries: temp_}, this.adjustContentSize)
+      }
+      //save in cookies
+    }
   }
 
     
@@ -267,21 +304,26 @@ class App extends Component {
                   )}
                 </select>
               </div>
-              <div className="col-sm-6">
-                <div className="btn btn-primary float-right mt-2" onClick={this.handleClickUpdate}>update CSV</div>
+              
+              <div className="col">
+                <div className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</div>
+                <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{if (!this.state.remCountries) {this.setState({remCountries: true})} else {this.setState({remCountries: false})}}}>Rem</div>
+                <div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>
+                
+                
               </div>
             </div>
 
             <div className="row">
               <div className="col">
               {this.state.btCountries.map((country, key) => 
-                <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} />
+                <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} remC={this.state.remCountries} />
               )}
               </div>
             </div>
 
             <div className="row">
-              <div id="totals" className="col">
+              <div id="totals" className="col mt-2 mb-2">
             
                 {totals.map((total) => 
                   total
@@ -297,7 +339,7 @@ class App extends Component {
         <div className="chart-section" ref={this.chartRef}>
           {this.state.chart.map((elem, key) => 
             <div key={key}>
-              <div className="left clear chart-title">{elem.title}:</div>
+              <div className="chart-title">{elem.title}:</div>
               <Chart labels={elem.labels} dataSets={elem.dataSet} dataSetsNames={elem.dataSetName} type={elem.type} colors={this.colors} />
             </div>
           )}
@@ -309,8 +351,8 @@ class App extends Component {
 }
 
 
-const ButtonCountry = ({status, name, handleClick}) => (
- <div className={`float-left btn btn-sm mt-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
+const ButtonCountry = ({status, name, remC, handleClick}) => (
+ <div className={`float-left btn btn-sm mt-1 ${status?"btn-info":"btn-outline-info"} ${remC?"remC":""}`} onClick={handleClick}>{name}</div>
 );
   
 export default App;

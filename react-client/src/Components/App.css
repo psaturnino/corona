@@ -1,13 +1,6 @@
 .App {text-align: center;width:100%;margin:0 auto;}
-
-
-
-#totals {margin-top:10px}
-#myChart{max-height:650px}
-.left{float:left}
-.clear{clear:both}
 .header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
-.chart-title{margin-top:30px}
+.chart-title{margin-top:30px; float:left}
 .chart-section{width:95%; margin: 0 auto; }
-
 .btn{margin-right:5px}
+.remC {opacity: 0.5;}
