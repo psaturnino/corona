@@ -308,6 +308,7 @@ class App extends Component {
   }
 }
 
+
 const ButtonCountry = ({status, name, handleClick}) => (
  <div className={`float-left btn btn-sm mt-1 ${status?"btn-info":"btn-outline-info"}`} onClick={handleClick}>{name}</div>
 );
