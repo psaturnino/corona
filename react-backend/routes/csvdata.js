@@ -196,6 +196,16 @@ router.get('/:id', function(req, res, next) {
   const params = req.params.id.split(",")
   CSVData_ = new CSVData(params);
 
+  if (req.query && req.query.updatedata != null) {
+    CSVData_.updateData(() => {
+      
+        let result = (CSVData_.getCsvData())
+        res.send(JSON.stringify(result))
+      
+    })
+    return;
+  }
+
   const result = CSVData_.getCsvData()
   res.send(JSON.stringify(result))
   return;

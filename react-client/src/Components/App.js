@@ -15,15 +15,15 @@ class App extends Component {
     remCountries: false,
     loaderActive: true,
     countryButtons: [
-      {"name": "Tunisia"},
-      {"name": "Germany"},
-      {"name": "Portugal"},
-      {"name": "China"},
-      {"name": "Italy"},
-      {"name": "US"},
-      {"name": "France"},
-      {"name": "Korea"},
-      {"name": "Spain"},
+      {name: "Tunisia"},
+      {name: "Germany"},
+      {name: "Portugal"},
+      {name: "China"},
+      {name: "Italy"},
+      {name: "US"},
+      {name: "France"},
+      {name: "Korea"},
+      {name: "Spain"},
     ],
     chart: [
       {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
@@ -41,11 +41,12 @@ class App extends Component {
   totals_ = []
 
   getData(update=false, countries=[]) {
+    
     this.setState({loaderActive: true})
     
     let url = "/csvdata"
-    if (update) url = "/csvdata/?updatedata"
     if (countries.length) url = "/csvdata/"+countries
+    if (update) url += "?updatedata"
     
     fetch(url)
     .then((res) => {return res.json()})
@@ -160,15 +161,15 @@ class App extends Component {
         
       }
       
-      this.setState({ allCountries: temp[0], chart: chart }); 
+      this.setState({allCountries: temp[0], chart: chart }); 
       this.setState({loaderActive: false})
 
     })
   }
 
   handleClickUpdate = (e) => {
-    this.resetSelectedCountries()
-    this.getData(true)
+    //this.resetSelectedCountries()
+    this.getData(true, this.getSelectedCountries())
     
   }
 
@@ -232,6 +233,7 @@ class App extends Component {
 
   getSelectedCountries() {
     let countries = []
+    
     this.state.countryButtons.forEach(element => {
       if (element.status) countries.push(element.name)
     });
@@ -245,16 +247,16 @@ class App extends Component {
     });
   }
 
-  addCountry(c) {
-    if (c) {
+  addCountry(country) {
+    if (country) {
       
       let exists = false
       this.state.countryButtons.forEach(element => {
-        if (element.name === c) {exists = true; return;}
+        if (element.name === country) {exists = true; return;}
       });
       
       if (!exists) {
-        const new_c = {name: c, status: true}
+        const new_c = {name: country, status: true}
         const temp_ = this.state.countryButtons;
         temp_.push(new_c)
         this.setState({countryButtons: temp_})
@@ -270,10 +272,22 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getData()
+    const cookie_countries = cookies.get("countries")
+    if (cookie_countries) {
+      this.setState({countryButtons: cookie_countries}, 
+        () => {
+          console.log(this.state.countryButtons)
+          this.getData(false, this.getSelectedCountries())
+        }
+      )
+      
+    }
+    else this.getData(false, this.getSelectedCountries())
+    
   }
 
   componentDidUpdate() {
+    cookies.set('countries', this.state.countryButtons);
     this.adjustContentSize()  
   }
 
@@ -312,8 +326,7 @@ class App extends Component {
               <div className="col">
                 <button type="button" className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</button>
                 <button type="button" className={`btnCustom red float-right ${this.state.remCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountryButtons()}}>Customize</button>
-                {/*<div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>*/}
-                <button type="button" className="btnCustom green sel float-right mt-2" onClick={()=>{}}>Save</button>
+                
                 
                 
               </div>
