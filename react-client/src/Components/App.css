@@ -2,5 +2,49 @@
 .header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
 .chart-title{margin-top:30px; float:left}
 .chart-section{width:95%; margin: 0 auto; }
-.btn{margin-right:5px}
-.remC {opacity: 0.5;}
+
+.btnCustom{
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    margin-right:5px; 
+    background-color: #ffffff;
+    outline: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+
+}
+
+.btnCustom.blue{
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+.btnCustom.red{
+    border-color: #dc3545;
+    color: #dc3545;
+}
+.btnCustom.green{
+    border-color: #28a745;
+    color: #28a745;
+}
+.btnCustom:focus{
+    outline: none;
+}
+
+.btnCustom.sel {color: #ffffff;}
+
+.btnCustom.blue.sel{
+    background-color: #138496;
+    border-color: #117a8b;
+}
+.btnCustom.red.sel{
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+.btnCustom.green.sel{
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.remove {opacity: 0.5;}

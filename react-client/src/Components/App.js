@@ -4,7 +4,6 @@ import Chart from './Chart';
 import Loader from './Loader';
 
 
-
 class App extends Component {
   
   headerRef = React.createRef();
@@ -42,9 +41,11 @@ class App extends Component {
   totals_ = []
 
   resetbtCountries() {
+
     this.state.btCountries.forEach(element => {
       element.status = false
     });
+
     this.countryStack = []
   }
 
@@ -60,8 +61,7 @@ class App extends Component {
     fetch(url)
     .then((res) => {return res.json()})
     .then((res) => {
-      if (update) document.getElementById("country").value="";
-
+      
       if (!res.length) {
         res = [];
         res[0] = []; //all countries
@@ -189,17 +189,21 @@ class App extends Component {
   handleClickUpdate = (e) => {
     this.resetbtCountries()
     this.getData(true)
+    
   }
 
   handleChange = (function(e){
     if (document.getElementById("country").value) {
-      this.resetbtCountries()
       this.countryStack.push(document.getElementById("country").value)
     }
 
-    this.addCountry()
+    this.addCountry(document.getElementById("country").value)
+
+    document.getElementById("country").value = ""
 
     this.getData(false, this.countryStack)
+
+    
 
   }.bind(this))
 
@@ -210,24 +214,25 @@ class App extends Component {
       return;
     }
 
-    if (document.getElementById("country").value) this.countryStack = []
-    document.getElementById("country").value = ""
-
     let temp_ = this.state.btCountries
     temp_[key] = this.state.btCountries[key]
     
     let indexElem = this.countryStack.indexOf(country);
+    
     if (indexElem > -1) {
       this.countryStack.splice(indexElem, 1);
       temp_[key].status = false
+      
       this.setState({btCountries: temp_})
+      
     }else {
       this.countryStack.push(country)
       temp_[key].status = true
       this.setState({btCountries: temp_})
     }
     
-    this.handleChange()
+    this.getData(false, this.countryStack)
+
   }
   
 
@@ -256,8 +261,7 @@ class App extends Component {
     //save in cookies
   }
 
-  addCountry() {
-    const c = document.getElementById("country").value
+  addCountry(c) {
     if (c) {
       
       let exists = false
@@ -270,7 +274,6 @@ class App extends Component {
         const temp_ = this.state.btCountries;
         temp_.push(new_c)
         this.setState({btCountries: temp_})
-        document.getElementById("country").value = ""
       }
       //save in cookies
     }
@@ -324,10 +327,10 @@ class App extends Component {
               </div>
               
               <div className="col">
-                <div className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</div>
-                <div className={`btn btn-sm float-right ${this.state.remCountries?"btn-danger":"btn-outline-danger"} mt-2`} onClick={()=>{this.customizeCountries()}}>Customize</div>
+                <button type="button" className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</button>
+                <button type="button" className={`btnCustom red float-right ${this.state.remCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountries()}}>Customize</button>
                 {/*<div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{this.addCountry()}}>Add</div>*/}
-                <div className="btn btn-sm float-right btn-outline-success mt-2" onClick={()=>{}}>Save</div>
+                <button type="button" className="btnCustom green float-right mt-2" onClick={()=>{}}>Save</button>
                 
                 
               </div>
@@ -336,7 +339,7 @@ class App extends Component {
             <div className="row">
               <div className="col">
               {this.state.btCountries.map((country, key) => 
-                <ButtonCountry name={country.name} handleClick={() => this.handleClick(key, country.name)} status={country.status} key={key} remC={this.state.remCountries} />
+                <ButtonCountry country={country} handleClick={() => this.handleClick(key, country.name)} key={key} remC={this.state.remCountries} />
               )}
               </div>
             </div>
@@ -370,8 +373,8 @@ class App extends Component {
 }
 
 
-const ButtonCountry = ({status, name, remC, handleClick}) => (
- <div className={`float-left btn btn-sm mt-1 ${status?"btn-info":"btn-outline-info"} ${remC?"remC":""}`} onClick={handleClick}>{name}</div>
+const ButtonCountry = ({country, remC, handleClick}) => (
+<button type="button" className={`float-left btnCustom blue btn-sm mt-1 ${country.status?"sel":""} ${remC?"remove":""}`} onClick={handleClick}>{country.name}</button>
 );
   
 export default App;
