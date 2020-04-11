@@ -14,13 +14,6 @@ const override = css`
 `;
  
 class Loader extends Component {
-  /*constructor(props) {
-    super(props);
-    this.state = {
-      loading: true
-    };
-  }*/
-
   render() {
     return (
       <div className="sweet-loading">

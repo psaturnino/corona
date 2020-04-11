@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import Chart from './Chart';
-import Loader from './Loader';
+import Chart from './Components/Chart';
+import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 
 class App extends Component {
@@ -40,8 +40,9 @@ class App extends Component {
 
   totals_ = []
 
-  getData(update=false, countries=[]) {
+  getData(update=false) {
     
+    const countries = this.getSelectedCountries();
     this.setState({loaderActive: true})
     
     let url = "/csvdata"
@@ -167,18 +168,12 @@ class App extends Component {
     })
   }
 
-  handleClickUpdate = (e) => {
-    //this.resetSelectedCountries()
-    this.getData(true, this.getSelectedCountries())
-    
-  }
-
   handleChange = (function(e){
     const country = e.target.value
     this.setState({country: country})
     this.addCountry(country)
     e.target.value = ""
-    this.getData(false, this.getSelectedCountries())
+    this.getData(false)
   }.bind(this))
 
   
@@ -204,7 +199,7 @@ class App extends Component {
       this.setState({countryButtons: temp_})
     }
     
-    this.getData(false, this.getSelectedCountries())
+    this.getData(false)
 
   }
   
@@ -225,6 +220,7 @@ class App extends Component {
 
     this.resetSelectedCountries()
     let temp_ = this.state.countryButtons
+
     temp_.splice(key, 1);
     this.setState({countryButtons: temp_})
     
@@ -276,13 +272,12 @@ class App extends Component {
     if (cookie_countries) {
       this.setState({countryButtons: cookie_countries}, 
         () => {
-          console.log(this.state.countryButtons)
-          this.getData(false, this.getSelectedCountries())
+          this.getData(false)
         }
       )
       
     }
-    else this.getData(false, this.getSelectedCountries())
+    else this.getData(false)
     
   }
 
@@ -324,7 +319,7 @@ class App extends Component {
               </div>
               
               <div className="col">
-                <button type="button" className="btn btn-primary float-right mt-2 ml-3" onClick={this.handleClickUpdate}>update CSV</button>
+                <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update CSV</button>
                 <button type="button" className={`btnCustom red float-right ${this.state.remCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountryButtons()}}>Customize</button>
                 
                 
@@ -358,7 +353,7 @@ class App extends Component {
           {this.state.chart.map((elem, key) => 
             <div key={key}>
               <div className="chart-title">{elem.title}:</div>
-              <Chart labels={elem.labels} dataSets={elem.dataSet} dataSetsNames={elem.dataSetName} type={elem.type} colors={this.colors} />
+              <Chart chart={elem} colors={this.colors} />
             </div>
           )}
         </div>
@@ -368,8 +363,9 @@ class App extends Component {
   }
 }
 
-const ButtonCountry = ({country, remC, handleClick}) => (
-<button type="button" className={`float-left btnCustom blue btn-sm mt-1 ${country.status?"sel":""} ${remC?"remove":""}`} onClick={handleClick}>{country.name}</button>
-);
+const ButtonCountry = ({country, remC, handleClick}) => {
+  return <button type="button" className={`float-left btnCustom blue btn-sm mt-1 ${country.status?"sel":""} ${remC?"remove":""}`} onClick={handleClick}>{country.name}</button>
+}
+
   
 export default App;
