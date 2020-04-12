@@ -187,7 +187,6 @@ class App extends Component {
         this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
       }
       
-      
       this.setState({countryList: temp[0], chart: chart, loaderActive: false}); 
     })
   }
@@ -278,14 +277,14 @@ class App extends Component {
 
   componentDidMount() {
     this.getData(false)
+    this.adjustContentSize()  
   }
 
   componentDidUpdate(prevProps, prevState) {
     
     if (this.state.countries !== prevState.countries)
       cookies.set('countries', this.state.countries);
-
-    this.adjustContentSize()  
+  
   }
 
     
