@@ -3,12 +3,15 @@
 .chart-title{margin-top:30px; float:left}
 .chart-section{width:95%; margin: 0 auto; }
 
+    
 .btnCustom{
+    appearance: none;
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: 0.2rem;
     margin-right:5px; 
+    border:1px solid;
     background-color: #ffffff;
     outline: none;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
