@@ -216,7 +216,7 @@ class App extends Component {
   }
   
   removeCountry(country) {
-    this.resetSelectedCountries()
+    //this.resetSelectedCountries()
     let temp = (this.state.countries.filter(elem => elem.name !== country.name))
     this.setState({countries: temp})
   }
@@ -242,7 +242,7 @@ class App extends Component {
     return countries;
   }
 
-  resetSelectedCountries() {
+  /*resetSelectedCountries() {
     const temp = []
 
     this.state.countries.forEach((element, key) => {
@@ -251,7 +251,7 @@ class App extends Component {
     });
 
     this.setState({countries: temp})
-  }
+  }*/
 
   customizeCountries() {
     
