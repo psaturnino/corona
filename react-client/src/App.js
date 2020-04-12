@@ -3,6 +3,7 @@ import './App.css';
 import Chart from './Components/Chart';
 import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
+import Country from './Components/Country'
 
 class App extends Component {
   
@@ -11,19 +12,19 @@ class App extends Component {
 
   state = {
     country: "",
-    allCountries: [],
-    remCountries: false,
+    countryList: [],
+    editCountries: false,
     loaderActive: true,
-    countryButtons: [
-      {name: "Tunisia"},
-      {name: "Germany"},
-      {name: "Portugal"},
-      {name: "China"},
-      {name: "Italy"},
-      {name: "US"},
-      {name: "France"},
-      {name: "Korea"},
-      {name: "Spain"},
+    countries: [
+      {name: "Tunisia", status: false},
+      {name: "Germany", status: false},
+      {name: "Portugal", status: false},
+      {name: "China", status: false},
+      {name: "Italy", status: false},
+      {name: "US", status: false},
+      {name: "France", status: false},
+      {name: "Korea", status: false},
+      {name: "Spain", status: false},
     ],
     chart: [
       {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
@@ -40,13 +41,37 @@ class App extends Component {
 
   totals_ = []
 
+  constructor() {
+    super()
+    const cookie_countries = cookies.get("countries")
+    if (cookie_countries) {
+      if (cookie_countries.length) {
+        let valid = true 
+
+        cookie_countries.forEach(element => {
+          if (typeof element.status == "undefined" || !element.name) {
+            valid = false
+          }
+        });
+
+        if (valid) this.state.countries = cookie_countries
+
+      }
+      
+    }
+    
+  }
+
+  
+
   getData(update=false) {
     
-    const countries = this.getSelectedCountries();
+    const selectedCountries = this.getNamesSelectedCountries();
+    
     this.setState({loaderActive: true})
     
     let url = "/csvdata"
-    if (countries.length) url = "/csvdata/"+countries
+    if (selectedCountries.length) url = "/csvdata/"+selectedCountries
     if (update) url += "?updatedata"
     
     fetch(url)
@@ -132,7 +157,6 @@ class App extends Component {
           ["Cases", "Deaths", "Recovered"]
         ]
         
-
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
           [temp[2][1], temp[3][1], temp[4][1]],
@@ -146,8 +170,6 @@ class App extends Component {
 
       const chart = []
 
-      const selectedCountries = this.getSelectedCountries()
-      
       for (let index = 0; index < dataSet.length; index++) {
 
         chart[index] = {
@@ -162,47 +184,81 @@ class App extends Component {
         
       }
       
-      this.setState({allCountries: temp[0], chart: chart }); 
-      this.setState({loaderActive: false})
-
+      this.setState({countryList: temp[0], chart: chart, loaderActive: false}); 
     })
   }
 
-  handleChange = (function(e){
+
+  handleChangeCountryListSelection = (e) => {
     const country = e.target.value
     this.setState({country: country})
-    this.addCountry(country)
+    this.addCountry({name: country})
     e.target.value = ""
     this.getData(false)
-  }.bind(this))
+  }
 
   
-  handleClick (key, country) {
+  handleCountryClick (country) {
 
-    if (this.state.remCountries) {
-      this.removeCountry(key)
+    if (this.state.editCountries) {
+      this.removeCountry(country)
       return;
     }
-
-    let temp_ = this.state.countryButtons
-    temp_[key] = this.state.countryButtons[key]
     
-    const selectedCountries = this.getSelectedCountries();
-    let indexElem = selectedCountries.indexOf(country);
-    
-    if (indexElem > -1) {
-      temp_[key].status = false
-      this.setState({countryButtons: temp_})
-      
-    }else {
-      temp_[key].status = true
-      this.setState({countryButtons: temp_})
+    let temp = [...this.state.countries]
+    const index = temp.findIndex(elem => elem.name === country.name)
+    if (!isNaN(index)) {
+      const status = !country.status
+      temp[index] = {...country}
+      temp[index].status = status
+      this.setState({countries: temp}, () => {this.getData(false)})
     }
-    
-    this.getData(false)
-
   }
   
+  removeCountry(country) {
+    this.resetSelectedCountries()
+    let temp = (this.state.countries.filter(elem => elem.name !== country.name))
+    this.setState({countries: temp})
+  }
+
+  addCountry(country) {
+    if (!this.state.countries.filter(elem => elem.name === country.name).length) {
+      let temp = [...this.state.countries];
+      country.status = true
+      temp.push(country)
+      this.setState({countries: temp})
+    }
+  }
+
+  getNamesSelectedCountries() {
+    let countries = []
+
+    const temp = this.state.countries.filter(elem => elem.status)
+
+    temp.forEach(element => {
+      countries.push(element.name)
+    });
+
+    return countries;
+  }
+
+  resetSelectedCountries() {
+    const temp = []
+
+    this.state.countries.forEach((element, key) => {
+      temp[key] = ({...element})
+      temp[key].status = false
+    });
+
+    this.setState({countries: temp})
+  }
+
+  customizeCountries() {
+    
+    if (!this.state.editCountries) 
+      this.setState({editCountries: true})
+    else this.setState({editCountries: false})
+  }
 
   adjustContentSize() {
     const h_elem = this.headerRef.current
@@ -216,73 +272,15 @@ class App extends Component {
     fnChangeSize()
   }
 
-  removeCountry(key) {
-
-    this.resetSelectedCountries()
-    let temp_ = this.state.countryButtons
-
-    temp_.splice(key, 1);
-    this.setState({countryButtons: temp_})
-    
-    //save in cookies
-  }
-
-  getSelectedCountries() {
-    let countries = []
-    
-    this.state.countryButtons.forEach(element => {
-      if (element.status) countries.push(element.name)
-    });
-
-    return countries;
-  }
-
-  resetSelectedCountries() {
-    this.state.countryButtons.forEach(element => {
-      element.status = false
-    });
-  }
-
-  addCountry(country) {
-    if (country) {
-      
-      let exists = false
-      this.state.countryButtons.forEach(element => {
-        if (element.name === country) {exists = true; return;}
-      });
-      
-      if (!exists) {
-        const new_c = {name: country, status: true}
-        const temp_ = this.state.countryButtons;
-        temp_.push(new_c)
-        this.setState({countryButtons: temp_})
-      }
-      //save in cookies
-    }
-  }
-
-  customizeCountryButtons() {
-    if (!this.state.remCountries) 
-      this.setState({remCountries: true})
-    else this.setState({remCountries: false})
-  }
-
   componentDidMount() {
-    const cookie_countries = cookies.get("countries")
-    if (cookie_countries) {
-      this.setState({countryButtons: cookie_countries}, 
-        () => {
-          this.getData(false)
-        }
-      )
-      
-    }
-    else this.getData(false)
-    
+    this.getData(false)
   }
 
-  componentDidUpdate() {
-    cookies.set('countries', this.state.countryButtons);
+  componentDidUpdate(prevProps, prevState) {
+    
+    if (this.state.countries !== prevState.countries)
+      cookies.set('countries', this.state.countries);
+
     this.adjustContentSize()  
   }
 
@@ -291,9 +289,7 @@ class App extends Component {
 
     let totals = [];
 
-    const selectedCountries = this.getSelectedCountries();
-    
-    if (selectedCountries.length <= 1) {
+    if (this.getNamesSelectedCountries().length <= 1) {
       this.state.chart[2].dataSetName.map((name, key) => 
         totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.totals_[key]}&nbsp;</span>)
       )
@@ -310,9 +306,9 @@ class App extends Component {
           <div className="container">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <select id="country" onChange={this.handleChange} className="form-control mt-2">
+                <select id="country" onChange={(e) => this.handleChangeCountryListSelection(e)} className="form-control mt-2">
                   <option value="">Countries</option>
-                  {this.state.allCountries.map((country, key) =>
+                  {this.state.countryList.map((country, key) =>
                     <option key={"country"+key} value={country}>{country}</option>
                   )}
                 </select>
@@ -320,17 +316,14 @@ class App extends Component {
               
               <div className="col">
                 <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update CSV</button>
-                <button type="button" className={`btnCustom red float-right ${this.state.remCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountryButtons()}}>Customize</button>
-                
-                
-                
+                <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountries()}}>Customize</button>
               </div>
             </div>
 
             <div className="row">
               <div className="col">
-              {this.state.countryButtons.map((country, key) => 
-                <ButtonCountry country={country} handleClick={() => this.handleClick(key, country.name)} key={key} remC={this.state.remCountries} />
+              {this.state.countries.map((country, key) => 
+                <Country country={country} onClick={() => this.handleCountryClick(country)} key={key} editCountries={this.state.editCountries} />
               )}
               </div>
             </div>
@@ -363,9 +356,4 @@ class App extends Component {
   }
 }
 
-const ButtonCountry = ({country, remC, handleClick}) => {
-  return <button type="button" className={`float-left btnCustom blue btn-sm mt-1 ${country.status?"sel":""} ${remC?"remove":""}`} onClick={handleClick}>{country.name}</button>
-}
-
-  
 export default App;
