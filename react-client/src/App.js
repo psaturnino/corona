@@ -179,10 +179,14 @@ class App extends Component {
           dataSetName: dataSetName[index], 
           dataSet: dataSet[index]
         }
-
-        if (dataSet.length > 2) this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
-        
+  
       }
+
+      
+      for (let index = this.colors.length; index < dataSet[0].length; index++) {
+        this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
+      }
+      
       
       this.setState({countryList: temp[0], chart: chart, loaderActive: false}); 
     })
