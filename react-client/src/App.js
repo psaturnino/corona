@@ -347,7 +347,7 @@ class App extends Component {
 
         <Loader active={this.state.loaderActive} />
 
-        <div className="w-100 pl-3 pr-3" ref={this.chartRef}>
+        <div className="w-100 pl-5 pr-5" ref={this.chartRef}>
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid">
               <div className="row mt-4">
