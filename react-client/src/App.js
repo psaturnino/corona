@@ -69,7 +69,7 @@ class App extends Component {
     
     let url = "/csvdata"
     if (selectedCountries.length) url = "/csvdata/"+selectedCountries
-    if (this.state.daysInterval) url += "?interval="+this.state.daysInterval
+    url += "?interval="+(this.state.daysInterval?this.state.daysInterval:0)
     if (update) url += "&updatedata"
     
     
