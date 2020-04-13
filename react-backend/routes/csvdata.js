@@ -26,12 +26,10 @@ class CSVData {
   countries = [];
   startAt = 0;
 
-  constructor (countries) {
+  constructor (countries, interval) {
     if (!countries) countries = ["all"]
     this.countries = countries
-  }
 
-  setInterval (interval) {
     this.startAt = interval?interval:0
   }
 
@@ -102,9 +100,7 @@ class CSVData {
 
         element = element.replace("Korea, South", "Korea South")
         element = element.replace("Bonaire, Sint Eustatius and Saba", "Bonaire Sint Eustatius and Saba")
-        
         element = element.split('"').join('');
-        
         element_ = element.split(",")
         
         if ((element_[1] == country) || country == "all") {
@@ -205,14 +201,14 @@ class CSVData {
 
 }
 
-
-
-router.get('/:id', function(req, res, next) {
+function handleRequest(req, res) {
+  let interval = "", countries = ""
   
-  const params = req.params.id.split(",")
-  CSVData_ = new CSVData(params);
-  if (req.query && req.query.interval != null) CSVData_.setInterval (req.query.interval)
+  if (req.query && req.query.interval != null) interval = req.query.interval
+  if (req.params && req.params.id != null) countries = req.params.id.split(",")
 
+  CSVData_ = new CSVData(countries, interval);
+  
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {
       
@@ -226,28 +222,16 @@ router.get('/:id', function(req, res, next) {
   const result = CSVData_.getCsvData()
   res.send(JSON.stringify(result))
   return;
-  
+}
+
+router.get('/:id', function(req, res, next) {
+  handleRequest(req, res)
+  return;
 })
 
 router.get('/', function(req, res, next) {
-
-  CSVData_ = new CSVData();
-  if (req.query && req.query.interval) CSVData_.setInterval (req.query.interval)
-  
-  if (req.query && req.query.updatedata != null) {
-    CSVData_.updateData(() => {
-      
-        let result = (CSVData_.getCsvData())
-        res.send(JSON.stringify(result))
-      
-    })
-    return;
-  }
-  
-  const result = (CSVData_.getCsvData())
-  res.send(JSON.stringify(result))
+  handleRequest(req, res)
   return;
-  
 });
 
 module.exports = router;
