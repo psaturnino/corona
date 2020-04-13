@@ -272,21 +272,25 @@ class App extends Component {
     else this.setState({editCountries: false})
   }
 
-  adjustContentSize() {
-    const h_elem = this.headerRef.current
-    const c_elem = this.chartRef.current
-    const fnChangeSize = () => {c_elem.style.paddingTop=getComputedStyle(h_elem).height}
+  adjustContentSize(addListen=false) {
+    const fnChangeSize = () => {
+      const h_elem = this.headerRef.current
+      const c_elem = this.chartRef.current
+      c_elem.style.paddingTop=getComputedStyle(h_elem).height
+    }
 
-    window.addEventListener("resize", () => {
-      fnChangeSize()
-    })
+    if (addListen) {
+      window.addEventListener("resize", (h_elem, c_elem) => {
+        fnChangeSize()
+      })
+    }
 
     fnChangeSize()
   }
 
   componentDidMount() {
     this.getData()
-    this.adjustContentSize()  
+    this.adjustContentSize(true)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -294,11 +298,12 @@ class App extends Component {
     if (this.state.countries !== prevState.countries)
       cookies.set('countries', this.state.countries);
   
+    this.adjustContentSize()
   }
 
   render() {
     return (
-      <div className="App">
+      <div className="w-100">
         <div className="header" ref={this.headerRef}>
           <div className="container">
             <div className="row mb-2">
@@ -324,22 +329,12 @@ class App extends Component {
               )}
               </div>
             </div>
-
-            <div className="row text-right">
-              <div id="totals" className="col mt-2 mb-2">
-            
-                {/*this.showTotals().map((total) => 
-                  total
-                )*/}
-                
-              </div>
-            </div>
           </div>
         </div>
 
         <Loader active={this.state.loaderActive} />
 
-        <div className="chart-section" ref={this.chartRef}>
+        <div className="w-100 pl-3 pr-3" ref={this.chartRef}>
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid">
               <div className="row mt-4">
@@ -350,7 +345,7 @@ class App extends Component {
                 )}</div>
               </div>
               <div className="row">
-              <Chart chart={elem} colors={this.colors} />
+                <Chart chart={elem} colors={this.colors} />
               </div>
             </div>
           )}
