@@ -205,9 +205,8 @@ class App extends Component {
   handleChangeCountryList = (e) => {
     const country = e.target.value
     this.setState({country: country})
-    this.addCountry({name: country})
     e.target.value = ""
-    this.getData()
+    this.addCountry({name: country}, () => this.getData())
   }
 
   
@@ -234,12 +233,12 @@ class App extends Component {
     this.setState({countries: temp})
   }
 
-  addCountry(country) {
+  addCountry(country, callback) {
     if (!this.state.countries.filter(elem => elem.name === country.name).length) {
       let temp = [...this.state.countries];
       country.status = true
       temp.push(country)
-      this.setState({countries: temp})
+      this.setState({countries: temp}, callback)
     }
   }
 
