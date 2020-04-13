@@ -211,7 +211,7 @@ router.get('/:id', function(req, res, next) {
   
   const params = req.params.id.split(",")
   CSVData_ = new CSVData(params);
-  if (req.query && req.query.interval) CSVData_.setInterval (req.query.interval)
+  if (req.query && req.query.interval != null) CSVData_.setInterval (req.query.interval)
 
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {
