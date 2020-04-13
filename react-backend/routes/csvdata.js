@@ -48,10 +48,12 @@ class CSVData {
     let element_ = [], countries = []
     
     stack.forEach(element => {
-      
-      element = element.replace("\"", "")
+
+      element = element.replace("Korea, South", "Korea South")
+      element = element.replace("Bonaire, Sint Eustatius and Saba", "Bonaire Sint Eustatius and Saba")
+      element = element.split('"').join('');
       element_ = element.split(",")
-  
+      
       if (i && element_[1]) {
         if (countries.indexOf(element_[1]) == -1) countries.push(element_[1])
       }
