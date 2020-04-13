@@ -57,11 +57,7 @@ class App extends Component {
         if (valid) this.state.countries = cookie_countries
       }
     }
-    
-    
   }
-
-  
 
   getData(update=false) {
     
@@ -201,7 +197,6 @@ class App extends Component {
     })
   }
 
-
   handleChangeCountryList = (e) => {
     const country = e.target.value
     this.setState({country: country})
@@ -209,7 +204,6 @@ class App extends Component {
     this.addCountry({name: country}, () => this.getData())
   }
 
-  
   handleCountryClick (country) {
 
     if (this.state.editCountries) {
