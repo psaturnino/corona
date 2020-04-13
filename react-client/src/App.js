@@ -23,14 +23,14 @@ class App extends Component {
       {name: "Italy", status: false},
       {name: "US", status: false},
       {name: "France", status: false},
-      {name: "Korea", status: false},
+      {name: "Korea South", status: false},
       {name: "Spain", status: false},
     ],
     chart: [
-      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
-      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
-      {type: "", title:"", labels: [], dataSetName: [], dataSet: []},
-    ]
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
+    ],
   }
 
   colors = [
@@ -39,7 +39,7 @@ class App extends Component {
     {"color": "#337e50"} 
   ]
 
-  totals_ = []
+  
 
   constructor() {
     super()
@@ -55,10 +55,9 @@ class App extends Component {
         });
 
         if (valid) this.state.countries = cookie_countries
-
       }
-      
     }
+    
     
   }
 
@@ -73,6 +72,7 @@ class App extends Component {
     let url = "/csvdata"
     if (selectedCountries.length) url = "/csvdata/"+selectedCountries
     if (update) url += "?updatedata"
+    
     
     fetch(url)
     .then((res) => {return res.json()})
@@ -93,6 +93,7 @@ class App extends Component {
       let labels = []
       let dataSetName = []
       let dataSet = []
+      let summary = []
 
       if (temp[5].length > 1) {
 
@@ -121,10 +122,14 @@ class App extends Component {
           dataSet[0].push(temp[2][0][key])
           dataSet[1].push(temp[3][0][key])
           dataSet[2].push(temp[4][0][key])
+
+          summary[0] = temp[2][2]
+          summary[1] = temp[3][2] 
+          summary[2] = temp[4][2] 
+
+          
         });
-
-        this.totals_ = temp[2][2]
-
+      
       }else {
 
         temp[2][0] = res[2][0][0]
@@ -160,12 +165,16 @@ class App extends Component {
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
           [temp[2][1], temp[3][1], temp[4][1]],
-          [[temp[2][2]], [temp[3][2]], [temp[4][2]]]
+          [temp[2][2], temp[3][2], temp[4][2]],
   
         ]
+        //dataSet[2][0] total cases
+        //dataSet[2][1] total daily
+        //dataSet[2][2] total deaths
 
-        this.totals_ = dataSet[2]
-
+        summary[0] = [temp[2][2], temp[3][2], temp[4][2]]
+        summary[1] = [temp[2][3], temp[3][3], temp[4][3]]
+        summary[2] = []
       }
 
       const chart = []
@@ -177,7 +186,8 @@ class App extends Component {
           title: chartTitle[index], 
           labels: labels[index], 
           dataSetName: dataSetName[index], 
-          dataSet: dataSet[index]
+          dataSet: dataSet[index],
+          summary: summary[index],
         }
   
       }
@@ -192,12 +202,12 @@ class App extends Component {
   }
 
 
-  handleChangeCountryListSelection = (e) => {
+  handleChangeCountryList = (e) => {
     const country = e.target.value
     this.setState({country: country})
     this.addCountry({name: country})
     e.target.value = ""
-    this.getData(false)
+    this.getData()
   }
 
   
@@ -214,7 +224,7 @@ class App extends Component {
       const status = !country.status
       temp[index] = {...country}
       temp[index].status = status
-      this.setState({countries: temp}, () => {this.getData(false)})
+      this.setState({countries: temp}, () => {this.getData()})
     }
   }
   
@@ -256,7 +266,7 @@ class App extends Component {
     this.setState({countries: temp})
   }*/
 
-  customizeCountries() {
+  editCountries() {
     
     if (!this.state.editCountries) 
       this.setState({editCountries: true})
@@ -276,7 +286,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getData(false)
+    this.getData()
     this.adjustContentSize()  
   }
 
@@ -287,39 +297,24 @@ class App extends Component {
   
   }
 
-    
   render() {
-
-    let totals = [];
-
-    if (this.getNamesSelectedCountries().length <= 1) {
-      this.state.chart[2].dataSetName.map((name, key) => 
-        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.totals_[key]}&nbsp;</span>)
-      )
-    }else {
-      
-      this.state.chart[0].dataSetName.map((name, key) => 
-        totals.push(<span key={key} style={this.colors[key]}>&bull; {name}: {this.totals_[key]}&nbsp;</span>)
-      )
-    }
-
     return (
       <div className="App">
         <div className="header" ref={this.headerRef}>
           <div className="container">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <select id="country" onChange={(e) => this.handleChangeCountryListSelection(e)} className="form-control mt-2">
+                <select id="country" onChange={(e) => this.handleChangeCountryList(e)} className="form-control mt-2">
                   <option value="">Countries</option>
                   {this.state.countryList.map((country, key) =>
-                    <option key={"country"+key} value={country}>{country}</option>
+                    <option key={key} value={country}>{country}</option>
                   )}
                 </select>
               </div>
               
               <div className="col">
                 <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update CSV</button>
-                <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.customizeCountries()}}>Customize</button>
+                <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.editCountries()}}>Customize</button>
               </div>
             </div>
 
@@ -331,12 +326,12 @@ class App extends Component {
               </div>
             </div>
 
-            <div className="row">
+            <div className="row text-right">
               <div id="totals" className="col mt-2 mb-2">
             
-                {totals.map((total) => 
+                {/*this.showTotals().map((total) => 
                   total
-                )}
+                )*/}
                 
               </div>
             </div>
@@ -347,9 +342,17 @@ class App extends Component {
 
         <div className="chart-section" ref={this.chartRef}>
           {this.state.chart.map((elem, key) => 
-            <div key={key}>
-              <div className="chart-title">{elem.title}:</div>
+            <div key={key} className="container-fluid">
+              <div className="row mt-4">
+                <div className="col-sm-3 text-left">{elem.title}:</div>
+                <div className="col-sm-6 text-center">{elem.summary.map((total, key_) => 
+                  <span key={key_} style={this.colors[key_]}>&bull; {total}&nbsp;</span>
+                  
+                )}</div>
+              </div>
+              <div className="row">
               <Chart chart={elem} colors={this.colors} />
+              </div>
             </div>
           )}
         </div>

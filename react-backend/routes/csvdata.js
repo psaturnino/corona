@@ -29,7 +29,7 @@ class CSVData {
   constructor (countries) {
     if (!countries) countries = ["all"]
     this.countries = countries
-    this.startAt = 30
+    this.startAt = 0
   }
 
   getFile(num) {
@@ -82,7 +82,7 @@ class CSVData {
     return days
   }
 
-  getDailyAmount(stack) {
+  getDailyAmount(stack, total_days) {
     let element_ = []
     let j = 0, current = 0, i=0, c=0, lastcurrent=0;
     
@@ -91,11 +91,15 @@ class CSVData {
     this.countries.forEach(country => {
 
       stackResults[c] = []
-      stackTotals[c] = 0
+      stackTotals[c] = []
       
       stack.forEach(element => {
 
-        element_ = element.replace("\"", "").split(",")
+        element = element.replace("Korea, South", "Korea South")
+        element = element.split('"').join('');
+        
+
+        element_ = element.split(",")
         
         if ((element_[1] == country) || country == "all") {
 
@@ -116,7 +120,7 @@ class CSVData {
               stackResults[c][i] += current
               
               if (j == (element_.length-1)) {
-                stackTotals[c] += current
+                stackTotals[c] = [stackResults[c][i]]
               }
               i++;
             }
@@ -127,21 +131,25 @@ class CSVData {
       c++
     });
 
-    console.log(stackTotals)
+    let lastDayValue = []
     stackResults.forEach((element, key) => {
       stackDailyIncrease[key] = [];
+      lastDayValue[key] = [];
       i=0
       element.forEach(elem => {
-        current = elem
-        stackDailyIncrease[key][i] = (current - lastcurrent)>0?(current - lastcurrent):0
-        lastcurrent = current
-        i++
+        
+          current = elem
+          stackDailyIncrease[key][i] = (current - lastcurrent)>0?(current - lastcurrent):0
+          lastcurrent = current
+
+          if (total_days-1 == i) lastDayValue[key] = stackDailyIncrease[key][i]
+          i++
+      
       });
     });
 
     
-    
-    return [stackResults, stackDailyIncrease, stackTotals]
+    return [stackResults, stackDailyIncrease, stackTotals, lastDayValue]
   }
 
   updateData(callback) {
@@ -163,24 +171,26 @@ class CSVData {
     
     let dataArrayTotalCases = fs.readFileSync(this.getFile(0).local, 'utf8');
     dataArrayTotalCases = dataArrayTotalCases.split(/\r?\n/);
+    
     //dataArrayTotalCases.shift() //because of get Days, the first row hve the days
   
     let dataArrayTotalDeaths = fs.readFileSync(this.getFile(1).local, 'utf8');
     dataArrayTotalDeaths = dataArrayTotalDeaths.split(/\r?\n/);
+    
     dataArrayTotalDeaths.shift()
   
     let dataArrayTotalRecovered = fs.readFileSync(this.getFile(2).local, 'utf8');
-    
     dataArrayTotalRecovered = dataArrayTotalRecovered.split(/\r?\n/);
+    
     dataArrayTotalRecovered.shift()
   
     
     data[0] = this.getCountries(dataArrayTotalCases)
     data[1] = this.getDays(dataArrayTotalCases)
     
-    data[2] = this.getDailyAmount(dataArrayTotalCases)
-    data[3] = this.getDailyAmount(dataArrayTotalDeaths)
-    data[4] = this.getDailyAmount(dataArrayTotalRecovered)
+    data[2] = this.getDailyAmount(dataArrayTotalCases, data[1].length)
+    data[3] = this.getDailyAmount(dataArrayTotalDeaths, data[1].length)
+    data[4] = this.getDailyAmount(dataArrayTotalRecovered, data[1].length)
 
     data[5] = this.countries
     

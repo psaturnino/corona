@@ -1,6 +1,6 @@
 .App {text-align: center;width:100%;margin:0 auto;}
-.header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;}
-.chart-title{margin-top:30px; float:left}
+.header{position: fixed; height:auto; background-color: #ffffff; width:100%; border-bottom: 1px solid gray;z-index:2}
+
 .chart-section{width:95%; margin: 0 auto; }
 
     
