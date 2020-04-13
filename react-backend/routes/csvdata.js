@@ -29,7 +29,10 @@ class CSVData {
   constructor (countries) {
     if (!countries) countries = ["all"]
     this.countries = countries
-    this.startAt = 0
+  }
+
+  setInterval (interval) {
+    this.startAt = interval?interval:0
   }
 
   getFile(num) {
@@ -71,7 +74,7 @@ class CSVData {
     element_.shift()
   
     element_.forEach(elem => {
-      if (j >= this.startAt) { 
+      if (j >= (element_.length - (this.startAt?this.startAt:element_.length))) { 
         elem = elem.split("/")
         days[i] = elem[1]+"."+elem[0]
         i++;
@@ -96,9 +99,10 @@ class CSVData {
       stack.forEach(element => {
 
         element = element.replace("Korea, South", "Korea South")
+        element = element.replace("Bonaire, Sint Eustatius and Saba", "Bonaire Sint Eustatius and Saba")
+        
         element = element.split('"').join('');
         
-
         element_ = element.split(",")
         
         if ((element_[1] == country) || country == "all") {
@@ -112,7 +116,7 @@ class CSVData {
           i=0
           
           element_.forEach(elem => {
-            if (j >= this.startAt) { 
+            if (j >= (element_.length - (this.startAt?this.startAt:element_.length))) { 
               if (!stackResults[c][i]) stackResults[c][i] = 0
               
               current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
@@ -205,6 +209,7 @@ router.get('/:id', function(req, res, next) {
   
   const params = req.params.id.split(",")
   CSVData_ = new CSVData(params);
+  if (req.query && req.query.interval) CSVData_.setInterval (req.query.interval)
 
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {
@@ -225,6 +230,7 @@ router.get('/:id', function(req, res, next) {
 router.get('/', function(req, res, next) {
 
   CSVData_ = new CSVData();
+  if (req.query && req.query.interval) CSVData_.setInterval (req.query.interval)
   
   if (req.query && req.query.updatedata != null) {
     CSVData_.updateData(() => {

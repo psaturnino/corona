@@ -11,6 +11,7 @@ class App extends Component {
   chartRef = React.createRef();
 
   state = {
+    daysInterval: "",
     country: "",
     countryList: [],
     editCountries: false,
@@ -38,12 +39,13 @@ class App extends Component {
     {"color": "#f77373"},
     {"color": "#337e50"} 
   ]
-
   
 
   constructor() {
     super()
     const cookie_countries = cookies.get("countries")
+    this.state.daysInterval = cookies.get("daysInterval")
+
     if (cookie_countries) {
       if (cookie_countries.length) {
         let valid = true 
@@ -67,7 +69,8 @@ class App extends Component {
     
     let url = "/csvdata"
     if (selectedCountries.length) url = "/csvdata/"+selectedCountries
-    if (update) url += "?updatedata"
+    if (this.state.daysInterval) url += "?interval="+this.state.daysInterval
+    if (update) url += "&updatedata"
     
     
     fetch(url)
@@ -197,6 +200,11 @@ class App extends Component {
     })
   }
 
+  handleChangeDaysList = (e) => {
+    const days = e.target.value
+    this.setState({daysInterval: days}, () => this.getData())
+  }
+
   handleChangeCountryList = (e) => {
     const country = e.target.value
     this.setState({country: country})
@@ -291,6 +299,9 @@ class App extends Component {
     
     if (this.state.countries !== prevState.countries)
       cookies.set('countries', this.state.countries);
+
+    if (this.state.daysInterval !== prevState.daysInterval)
+      cookies.set('daysInterval', this.state.daysInterval);
   
     this.adjustContentSize()
   }
@@ -302,11 +313,19 @@ class App extends Component {
           <div className="container">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <select id="country" onChange={(e) => this.handleChangeCountryList(e)} className="form-control mt-2">
-                  <option value="">Countries</option>
+                <select onChange={(e) => this.handleChangeCountryList(e)} className="form-control mt-2">
+                  <option value="">Add Country</option>
                   {this.state.countryList.map((country, key) =>
                     <option key={key} value={country}>{country}</option>
                   )}
+                </select>
+              </div>
+
+              <div className="col-sm-2">
+                <select defaultValue = {this.state.daysInterval} onChange={(e) => this.handleChangeDaysList(e)} className="form-control mt-2">
+                  <option value="">All Days</option>
+                  <option value="30">30 Days</option>
+                  <option value="60">60 Days</option>
                 </select>
               </div>
               
