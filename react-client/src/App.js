@@ -11,6 +11,7 @@ class App extends Component {
   chartRef = React.createRef();
 
   state = {
+    noData: false,
     daysInterval: "",
     country: "",
     countryList: [],
@@ -74,8 +75,14 @@ class App extends Component {
     
     
     fetch(url)
-    .then((res) => {return res.json()})
     .then((res) => {
+      if (res.status === 200) return res.json()
+      else return [];
+    })
+    .then((res) => {
+
+      let noData = false
+      if (!res.length) noData = true
       
       if (!res.length) {
         res = [];
@@ -94,8 +101,8 @@ class App extends Component {
       let dataSet = []
       let summary = []
 
-      if (temp[5].length > 1) {
-
+      if (temp[5].length > 1 || temp[5].length === 0) {
+        
         chartTitle = [
           "Cases Accumulated",
           "Deaths Accumulated",
@@ -108,8 +115,10 @@ class App extends Component {
           temp[1],
         ]
 
-        dataSetName[0] = []; dataSetName[1] = []; dataSetName[2] = []
+        dataSetName[0] = []; dataSetName[1] = []; dataSetName[2] = [];
         dataSet[0] = []; dataSet[1] = []; dataSet[2] = []
+        summary[0] = []; summary[1] = []; summary[2] = []
+        
         
         temp[5].forEach((country_, key) => {
           
@@ -125,12 +134,12 @@ class App extends Component {
           summary[0] = temp[2][2]
           summary[1] = temp[3][2] 
           summary[2] = temp[4][2] 
-
           
         });
       
+      
       }else {
-
+        
         temp[2][0] = res[2][0][0]
         temp[2][1] = res[2][1][0]
         temp[2][2] = res[2][2][0]
@@ -176,7 +185,7 @@ class App extends Component {
         summary[2] = []
       }
 
-      const chart = []
+      let chart = []
 
       for (let index = 0; index < dataSet.length; index++) {
 
@@ -196,7 +205,9 @@ class App extends Component {
         this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
       }
       
-      this.setState({countryList: temp[0], chart: chart, loaderActive: false}); 
+      this.setState({countryList: temp[0], chart: chart, loaderActive: false, noData: noData}); 
+      
+      
     })
   }
 
@@ -348,6 +359,7 @@ class App extends Component {
         <Loader active={this.state.loaderActive} />
 
         <div className="w-100 pl-5 pr-5" ref={this.chartRef}>
+          {(this.state.noData===true?<p className="text-center">No Data</p>:"")}
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid">
               <div className="row mt-4">

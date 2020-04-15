@@ -2,21 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const https = require('https');
-
-
-function download(url, dest, callback) {
-  const file = fs.createWriteStream(dest);
-  https.get(url, function (response) {
-      response.pipe(file);
-      file.on('finish', function () {
-          file.close(callback); // close() is async, call callback after close completes.
-      });
-      file.on('error', function (err) {
-          fs.unlink(dest); // Delete the file async. (But we don't check the result)
-          
-      });
-  });
-}
+const csv = require('csv-parser')
 
 class CSVData {
   remoteFiles = new Array("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
@@ -154,26 +140,19 @@ class CSVData {
     return [stackResults, stackDailyIncrease, stackTotals, lastDayValue]
   }
 
-  updateData(callback) {
-    download(this.remoteFiles[0], this.localFiles[0],
-     () => {download(this.remoteFiles[1], this.localFiles[1],
-        () => {download(this.remoteFiles[2], this.localFiles[2], () => {callback()})}
-      )
-    })
-  }
 
-  getCsvData() {
+  
+  
+  readCsvData() {
     let data = new Array()
-    data[0] = new Array();
-    data[1] = new Array();
-    data[2] = new Array();
-    
-    
+     
     if (!fs.existsSync(this.getFile(0).local) || !fs.existsSync(this.getFile(1).local) || !fs.existsSync(this.getFile(2).local))  return [];
+
+    let dataArrayTotalCases = []
     
-    let dataArrayTotalCases = fs.readFileSync(this.getFile(0).local, 'utf8');
+    dataArrayTotalCases = fs.readFileSync(this.getFile(0).local, 'utf8');
     dataArrayTotalCases = dataArrayTotalCases.split(/\r?\n/);
-    
+
     //dataArrayTotalCases.shift() //because of get Days, the first row hve the days
   
     let dataArrayTotalDeaths = fs.readFileSync(this.getFile(1).local, 'utf8');
@@ -201,6 +180,9 @@ class CSVData {
 
 }
 
+
+
+
 function handleRequest(req, res) {
   let interval = "", countries = ""
   
@@ -208,19 +190,56 @@ function handleRequest(req, res) {
   if (req.params && req.params.id != null) countries = req.params.id.split(",")
 
   CSVData_ = new CSVData(countries, interval);
-  
-  if (req.query && req.query.updatedata != null) {
-    CSVData_.updateData(() => {
-      
-        let result = (CSVData_.getCsvData())
-        res.send(JSON.stringify(result))
-      
-    })
-    return;
-  }
 
-  const result = CSVData_.getCsvData()
-  res.send(JSON.stringify(result))
+  if (req.query && req.query.updatedata != null) {
+
+      let promises = []
+      let file = [];
+      for (let index = 0; index < CSVData_.localFiles.length; index++) {
+        promises[index] = new Promise((resolve, reject) => {
+          file[index] = fs.createWriteStream(CSVData_.localFiles[index]);
+          https.get(CSVData_.remoteFiles[index], function (response) {
+              response.pipe(file[index] );
+              file[index].on('finish', function () {
+                resolve(1)
+                file[index].close(); // close() is async, call callback after close completes.
+              });
+              file[index].on('error', function (err) {
+                fs.unlink(CSVData_.localFiles[index]); // Delete the file async. (But we don't check the result)
+                reject(2)
+              });
+          });
+        })
+      }
+
+      
+      Promise.all(promises)
+      .then(() => {
+        
+        new Promise((resolve, reject) => {
+          const result = (CSVData_.readCsvData())
+          if (result.length) resolve(JSON.stringify(result))
+          else reject()
+        })
+        .then((out) => res.send(out))
+        .catch(() => res.sendStatus(500))
+
+      }).catch(() => {
+        res.sendStatus(500)
+      })
+      
+    return
+  }
+  
+  
+  new Promise((resolve, reject) => {
+    const result = (CSVData_.readCsvData())
+    if (result.length) resolve(JSON.stringify(result))
+    else reject()
+  })
+  .then((out) => res.send(out))
+  .catch(() => res.sendStatus(500))
+
   return;
 }
 
