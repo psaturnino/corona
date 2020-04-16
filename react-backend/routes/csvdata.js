@@ -32,48 +32,41 @@ class CSVData {
     let element_ = [], countries = []
     
     stack.forEach(element => {
-
-      element = element.replace("Korea, South", "Korea South")
-      element = element.replace("Bonaire, Sint Eustatius and Saba", "Bonaire Sint Eustatius and Saba")
-      element = element.split('"').join('');
-      element_ = element.split(",")
       
-      if (element_[1]) {
-        if (countries.indexOf(element_[1]) == -1) countries.push(element_[1])
+      if (element[1]) {
+        if (countries.indexOf(element[1]) == -1) countries.push(element[1].replace(",", ""))
       }
       i++;
   
     })
-  
+    
     return countries
   }
 
   getDays(stack) {
 
-    let days = [], j=0, i=0
+    let days = [], j=0
     
-    let element_ = stack.split(",")
-    
-    element_.shift()
-    element_.shift()
-    element_.shift()
-    element_.shift()
+    stack.shift()
+    stack.shift()
+    stack.shift()
+    stack.shift()
+
+    const size = stack.length
   
-    element_.forEach(elem => {
-      if (j >= (element_.length - (this.startAt?this.startAt:element_.length))) { 
+    stack.forEach(elem => {
+      if (j >= (size - (this.startAt?this.startAt:size))) { 
         elem = elem.split("/")
-        days[i] = elem[1]+"."+elem[0]
-        i++;
+        days.push(elem[1]+"."+elem[0])
       }
       j++
     });
-  
+    
     return days
   }
 
   getDailyAmount(stack, total_days) {
-    let element_ = []
-    let j = 0, current = 0, i=0, c=0, lastcurrent=0;
+    let j = 0, current = 0, i=0, c=0, lastcurrent=0, size = 0;
     
     let stackResults = [], stackTotals = [], stackDailyIncrease = []
     
@@ -84,32 +77,28 @@ class CSVData {
       
       stack.forEach(element => {
 
-        element = element.replace("Korea, South", "Korea South")
-        element = element.replace("Bonaire, Sint Eustatius and Saba", "Bonaire Sint Eustatius and Saba")
-        element = element.split('"').join('');
-        element_ = element.split(",")
-        
-        if ((element_[1] == country) || country == "all") {
+        if ((element[1].replace(",", "") == country) || country == "all") {
 
-          element_.shift()
-          element_.shift()
-          element_.shift()
-          element_.shift()
+          element.shift()
+          element.shift()
+          element.shift()
+          element.shift()
           
           j=0
           i=0
+
+          size = element.length
           
-          element_.forEach(elem => {
-            if (j >= (element_.length - (this.startAt?this.startAt:element_.length))) { 
+          element.forEach(elem => {
+            if (j >= (size - (this.startAt?this.startAt:size))) { 
               if (!stackResults[c][i]) stackResults[c][i] = 0
               
               current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
 
               stackResults[c][i] += current
               
-              if (j == (element_.length-1)) {
-                stackTotals[c] = [stackResults[c][i]]
-              }
+              if (j == (size-1)) stackTotals[c] = [stackResults[c][i]]
+
               i++;
             }
             j++;
@@ -160,39 +149,52 @@ class CSVData {
       });
     })
   }
-  
-  readCSV(csv) {
+
+  readCSV(csvFile) {
 
     return new Promise((resolve, reject) => {
-      let csvRes;
+      let results = [];
+ 
       try {
-
-        if (!fs.existsSync(csv)) reject(false);
-
-        fs.readFile(csv, 'utf8', (err, data) => {
-          if (err) reject(false)
-          else {
-            csvRes = data.split(/\r?\n/);
-            resolve(csvRes);
-          }
+        fs.createReadStream(csvFile)
+        .pipe(csv({ separator: ',', headers: false}))
+        .on('data', (data) => results.push(data))
+        .on('end', () => {
+          resolve(results);
         });
-        
       } catch (error) {
         reject(false);
       }
     })
   }
+  
+  handleCSV(total, deaths, recovered) {
 
-  calculateCSV(total, deaths, recovered) {
+    let files = [total, deaths, recovered], data = [];
 
-    let days = total[0];
-    total.shift() //because of get Days, the first row hve the days
+    let files_ = []
+    files.forEach((file, key_file)=> {
+      files_[key_file] = []
+      file.forEach((obj, key_line)=> {
+        files_[key_file][key_line] = []
+        for (const key_ in obj) {
+          if (obj.hasOwnProperty(key_)) {
+            const element = obj[key_];
+            files_[key_file][key_line].push(element)
+          }
+        }
+      });
+    });
+
+    total = files_[0]
+    deaths = files_[1]
+    recovered = files_[2]
+    const days = total[0];
+
+    total.shift()
     deaths.shift()
     recovered.shift()
     
-    
-    let data = new Array()
-
     data[0] = this.getCountries(total)
     data[1] = this.getDays(days)
 
@@ -232,7 +234,7 @@ function handleRequest(req, res) {
       
       Promise.all([file1, file2, file3])
       .then((r) => {
-        const result = CSVData_.calculateCSV(r[0], r[1], r[2])
+        const result = CSVData_.handleCSV(r[0], r[1], r[2])
         if (result.length) res.send(JSON.stringify(result))
         else res.sendStatus(500)
       }).catch((r) => {
@@ -253,7 +255,7 @@ function handleRequest(req, res) {
   
   Promise.all([file1, file2, file3])
   .then((r) => {
-    const result = CSVData_.calculateCSV(r[0], r[1], r[2])
+    const result = CSVData_.handleCSV(r[0], r[1], r[2])
     if (result.length) res.send(JSON.stringify(result))
     else res.sendStatus(500)
   }).catch((r) => {
