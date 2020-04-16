@@ -5,9 +5,17 @@ const https = require('https');
 const csv = require('csv-parser')
 
 class CSVData {
-  remoteFiles = new Array("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv", "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+  remoteFiles = new Array(
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv", 
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv", 
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
+  );
   
-  localFiles = new Array('public/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', 'public/csse_covid_19_time_series/time_series_covid19_recovered_global.csv');
+  localFiles = new Array(
+    'public/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', 
+    'public/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', 
+    'public/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
+  );
 
   selectedCountries = [];
   startAt = 0;
@@ -65,7 +73,7 @@ class CSVData {
     return days
   }
 
-  getDailyAmount(stack, total_days) {
+  calculate(stack, total_days) {
     let j = 0, current = 0, i=0, c=0, lastcurrent=0, size = 0;
     
     let stackResults = [], stackTotals = [], stackDailyIncrease = []
@@ -131,7 +139,7 @@ class CSVData {
 
 
   
-  downloadCSV(url, local) {
+  download(url, local) {
     
     return new Promise((resolve, reject) => {
       let file = fs.createWriteStream(local);
@@ -150,7 +158,7 @@ class CSVData {
     })
   }
 
-  readCSV(csvFile) {
+  read(csvFile) {
 
     return new Promise((resolve, reject) => {
       let results = [];
@@ -168,7 +176,7 @@ class CSVData {
     })
   }
   
-  handleCSV(total, deaths, recovered) {
+  handle(total, deaths, recovered) {
 
     let files = [total, deaths, recovered], data = [];
 
@@ -198,9 +206,9 @@ class CSVData {
     data[0] = this.getCountries(total)
     data[1] = this.getDays(days)
 
-    data[2] = this.getDailyAmount(total, data[1].length)
-    data[3] = this.getDailyAmount(deaths, data[1].length)
-    data[4] = this.getDailyAmount(recovered, data[1].length)
+    data[2] = this.calculate(total, data[1].length)
+    data[3] = this.calculate(deaths, data[1].length)
+    data[4] = this.calculate(recovered, data[1].length)
 
     data[5] = this.selectedCountries
     
@@ -221,20 +229,20 @@ function handleRequest(req, res) {
   if (req.query && req.query.updatedata != null) {
 
     
-    let p1 = CSVData_.downloadCSV(CSVData_.getFile(0).remote, CSVData_.getFile(0).local);
-    let p2 = CSVData_.downloadCSV(CSVData_.getFile(1).remote, CSVData_.getFile(1).local);
-    let p3 = CSVData_.downloadCSV(CSVData_.getFile(2).remote, CSVData_.getFile(2).local);
+    let p1 = CSVData_.download(CSVData_.getFile(0).remote, CSVData_.getFile(0).local);
+    let p2 = CSVData_.download(CSVData_.getFile(1).remote, CSVData_.getFile(1).local);
+    let p3 = CSVData_.download(CSVData_.getFile(2).remote, CSVData_.getFile(2).local);
 
     Promise.all([p1, p2, p3])
     .then((r) => {
       
-      const file1 = CSVData_.readCSV(CSVData_.getFile(0).local)
-      const file2 = CSVData_.readCSV(CSVData_.getFile(1).local)
-      const file3 = CSVData_.readCSV(CSVData_.getFile(2).local)
+      const file1 = CSVData_.read(CSVData_.getFile(0).local)
+      const file2 = CSVData_.read(CSVData_.getFile(1).local)
+      const file3 = CSVData_.read(CSVData_.getFile(2).local)
       
       Promise.all([file1, file2, file3])
       .then((r) => {
-        const result = CSVData_.handleCSV(r[0], r[1], r[2])
+        const result = CSVData_.handle(r[0], r[1], r[2])
         if (result.length) res.send(JSON.stringify(result))
         else res.sendStatus(500)
       }).catch((r) => {
@@ -249,13 +257,13 @@ function handleRequest(req, res) {
   }
   
 
-  const file1 = CSVData_.readCSV(CSVData_.getFile(0).local)
-  const file2 = CSVData_.readCSV(CSVData_.getFile(1).local)
-  const file3 = CSVData_.readCSV(CSVData_.getFile(2).local)
+  const file1 = CSVData_.read(CSVData_.getFile(0).local)
+  const file2 = CSVData_.read(CSVData_.getFile(1).local)
+  const file3 = CSVData_.read(CSVData_.getFile(2).local)
   
   Promise.all([file1, file2, file3])
   .then((r) => {
-    const result = CSVData_.handleCSV(r[0], r[1], r[2])
+    const result = CSVData_.handle(r[0], r[1], r[2])
     if (result.length) res.send(JSON.stringify(result))
     else res.sendStatus(500)
   }).catch((r) => {
