@@ -142,82 +142,54 @@ class CSVData {
 
 
   
-  
-  readCSVData() {
-     
+  downloadCSV(url, local) {
+    
     return new Promise((resolve, reject) => {
-
-      if (!fs.existsSync(this.getFile(0).local) || !fs.existsSync(this.getFile(1).local) || !fs.existsSync(this.getFile(2).local)) reject(false);
-
-      /*let dataArrayTotalDays;
-      
-      let dataArrayTotalCases;
-      await readCSVFile(this.getFile(0).local).then((res) => {dataArrayTotalCases = res;}).catch(() => {});
-      dataArrayTotalCases = dataArrayTotalCases.split(/\r?\n/);
-      dataArrayTotalDays = dataArrayTotalCases[0];
-      dataArrayTotalCases.shift()
-      
-      let dataArrayTotalDeaths;
-      await readCSVFile(this.getFile(1).local).then((res) => {dataArrayTotalDeaths = res}).catch(() => {});
-      dataArrayTotalDeaths = dataArrayTotalDeaths.split(/\r?\n/);
-      dataArrayTotalDeaths.shift()
-      
-      let dataArrayTotalRecovered;
-      await readCSVFile(this.getFile(2).local).then((res) => {dataArrayTotalRecovered = res}).catch(() => {});
-      dataArrayTotalRecovered = dataArrayTotalRecovered.split(/\r?\n/);
-      dataArrayTotalRecovered.shift()*/
-
-      let dataArrayTotalCases, dataArrayTotalDays, dataArrayTotalDeaths, dataArrayTotalRecovered;
-      try {
-        dataArrayTotalCases = fs.readFileSync(this.getFile(0).local, 'utf8');
-        dataArrayTotalCases = dataArrayTotalCases.split(/\r?\n/);
-        dataArrayTotalDays = dataArrayTotalCases[0];
-        dataArrayTotalCases.shift() //because of get Days, the first row hve the days
-      } catch (error) {
-        reject(false);
-      }
-        
-      
-      
-      try {
-        dataArrayTotalDeaths = fs.readFileSync(this.getFile(1).local, 'utf8');
-        dataArrayTotalDeaths = dataArrayTotalDeaths.split(/\r?\n/);
-        dataArrayTotalDeaths.shift()
-      } catch (error) {
-        reject(false);
-      }
-
-      try {
-        dataArrayTotalRecovered = fs.readFileSync(this.getFile(2).local, 'utf8');
-        dataArrayTotalRecovered = dataArrayTotalRecovered.split(/\r?\n/);
-        dataArrayTotalRecovered.shift()
-      } catch (error) {
-        reject(false);
-      }
-      
-      resolve([dataArrayTotalDays, dataArrayTotalCases, dataArrayTotalDeaths, dataArrayTotalRecovered]);
+      let file = fs.createWriteStream(local);
+      https.get(url, function (response) {
+          response.pipe(file);
+          file.on('finish', function () {
+            file.close(); // close() is async, call callback after close completes.
+            if (file.bytesWritten < 1000) reject(false)
+            else resolve(true)
+          });
+          file.on('error', function (err) {
+            fs.unlink(local); // Delete the file async. (But we don't check the result)
+            reject(false)
+          });
+      });
     })
-    
+  }
   
-    
-    /*let dataArrayTotalCases = fs.readFileSync(this.getFile(0).local, 'utf8');
-    dataArrayTotalCases = dataArrayTotalCases.split(/\r?\n/);
-    let dataArrayTotalDays = dataArrayTotalCases[0];
-    dataArrayTotalCases.shift() //because of get Days, the first row hve the days
+  readCSV(csv) {
 
-    let dataArrayTotalDeaths = fs.readFileSync(this.getFile(1).local, 'utf8');
-    dataArrayTotalDeaths = dataArrayTotalDeaths.split(/\r?\n/);
-    dataArrayTotalDeaths.shift()
-  
-    let dataArrayTotalRecovered = fs.readFileSync(this.getFile(2).local, 'utf8');
-    dataArrayTotalRecovered = dataArrayTotalRecovered.split(/\r?\n/);
-    dataArrayTotalRecovered.shift()*/
-    
-    //return [dataArrayTotalDays, dataArrayTotalCases, dataArrayTotalDeaths, dataArrayTotalRecovered];
-    
+    return new Promise((resolve, reject) => {
+      let csvRes;
+      try {
+
+        if (!fs.existsSync(csv)) reject(false);
+
+        fs.readFile(csv, 'utf8', (err, data) => {
+          if (err) reject(false)
+          else {
+            csvRes = data.split(/\r?\n/);
+            resolve(csvRes);
+          }
+        });
+        
+      } catch (error) {
+        reject(false);
+      }
+    })
   }
 
-  calcCSVData(days, total, deaths, recovered) {
+  calculateCSV(total, deaths, recovered) {
+
+    let days = total[0];
+    total.shift() //because of get Days, the first row hve the days
+    deaths.shift()
+    recovered.shift()
+    
     
     let data = new Array()
 
@@ -236,30 +208,6 @@ class CSVData {
 }
 
 
-function readCSVFile(path) {
-
-  /*let results = [];
-
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(path)
-      .pipe(csv({ separator: ',' }))
-      .on('data', (data) => results.push(data))
-      .on('end', () => {
-        resolve(results);
-    });
-  })*/
-
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', function (err, data) {
-      if (err) {
-        reject(err);
-      }
-      resolve(data);
-    });
-  });
-}
-
-
 function handleRequest(req, res) {
   let interval = "", selectedCountries = ""
   
@@ -270,42 +218,26 @@ function handleRequest(req, res) {
 
   if (req.query && req.query.updatedata != null) {
 
-    let promises = []
-    let file = [];
-    for (let index = 0; index < CSVData_.localFiles.length; index++) {
-      promises[index] = new Promise((resolve, reject) => {
-        file[index] = fs.createWriteStream(CSVData_.localFiles[index]);
-        https.get(CSVData_.remoteFiles[index], function (response) {
-            response.pipe(file[index] );
-            file[index].on('finish', function () {
-              file[index].close(); // close() is async, call callback after close completes.
-              if (file[index].bytesWritten < 1000) reject(false)
-              else resolve(true)
-            });
-            file[index].on('error', function (err) {
-              fs.unlink(CSVData_.localFiles[index]); // Delete the file async. (But we don't check the result)
-              reject(false)
-            });
-        });
-      })
-    }
+    
+    let p1 = CSVData_.downloadCSV(CSVData_.getFile(0).remote, CSVData_.getFile(0).local);
+    let p2 = CSVData_.downloadCSV(CSVData_.getFile(1).remote, CSVData_.getFile(1).local);
+    let p3 = CSVData_.downloadCSV(CSVData_.getFile(2).remote, CSVData_.getFile(2).local);
 
-    Promise.all(promises)
+    Promise.all([p1, p2, p3])
     .then((r) => {
       
-      new Promise((resolve, reject) => {
-        CSVData_.readCSVData()
-        .then((res) => {
-          result = CSVData_.calcCSVData(res[0], res[1], res[2], res[3])
-          if (result.length) resolve(JSON.stringify(result))
-          else reject()
-        })
-        .catch(() => {
-          reject()
-        })
+      const file1 = CSVData_.readCSV(CSVData_.getFile(0).local)
+      const file2 = CSVData_.readCSV(CSVData_.getFile(1).local)
+      const file3 = CSVData_.readCSV(CSVData_.getFile(2).local)
+      
+      Promise.all([file1, file2, file3])
+      .then((r) => {
+        const result = CSVData_.calculateCSV(r[0], r[1], r[2])
+        if (result.length) res.send(JSON.stringify(result))
+        else res.sendStatus(500)
+      }).catch((r) => {
+        res.sendStatus(500)
       })
-      .then((out) => res.send(out))
-      .catch(() => res.sendStatus(500))
 
     }).catch((r) => {
       res.sendStatus(500)
@@ -315,26 +247,21 @@ function handleRequest(req, res) {
   }
   
 
+  const file1 = CSVData_.readCSV(CSVData_.getFile(0).local)
+  const file2 = CSVData_.readCSV(CSVData_.getFile(1).local)
+  const file3 = CSVData_.readCSV(CSVData_.getFile(2).local)
   
-  new Promise((resolve, reject) => {
-    
-    CSVData_.readCSVData()
-    .then((res) => {
-      result = CSVData_.calcCSVData(res[0], res[1], res[2], res[3])
-      if (result.length) resolve(JSON.stringify(result))
-      else reject()
-    })
-    .catch(() => {
-      reject()
-    })
-    
-    //if (result.length) resolve(JSON.stringify(result))
-    //else reject()
+  Promise.all([file1, file2, file3])
+  .then((r) => {
+    const result = CSVData_.calculateCSV(r[0], r[1], r[2])
+    if (result.length) res.send(JSON.stringify(result))
+    else res.sendStatus(500)
+  }).catch((r) => {
+    res.sendStatus(500)
   })
-  .then((out) => res.send(out))
-  .catch(() => res.sendStatus(500))
 
   return;
+
 }
 
 router.get('/:id', function(req, res, next) {
