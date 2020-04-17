@@ -325,7 +325,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(process.env.HOST)
+    console.log(process.env)
     return (
       <div className="w-100">
         <div className="header" ref={this.headerRef}>
