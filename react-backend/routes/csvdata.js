@@ -218,11 +218,17 @@ class CSVData {
 }
 
 
-function handleRequest(req, res, body) {
+/*router.post('/:id', function(req, res) {
+  console.log(req.body)
+  handleRequest(req, res)
+  return;
+})*/
+
+router.post('/', function(req, res) {
   let interval = "", selectedCountries = ""
   
   if (req.query && req.query.interval != null) interval = req.query.interval
-  if (body && body.length) selectedCountries = body
+  if (req.body && req.body.length) selectedCountries = req.body
   //if (req.params && req.params.id != null) selectedCountries = req.params.id.split(",")
 
   CSVData_ = new CSVData(selectedCountries, interval);
@@ -271,18 +277,6 @@ function handleRequest(req, res, body) {
     res.sendStatus(500)
   })
 
-  return;
-
-}
-
-/*router.post('/:id', function(req, res) {
-  console.log(req.body)
-  handleRequest(req, res)
-  return;
-})*/
-
-router.post('/', function(req, res) {
-  handleRequest(req, res, req.body)
   return;
 });
 
