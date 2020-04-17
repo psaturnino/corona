@@ -5,8 +5,6 @@ import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 import Country from './Components/Country'
 
-process.env.REACT_APP_SERVER = "https://www.my-simple-cloud.com:3001"
-
 class App extends Component {
   
   headerRef = React.createRef();
@@ -75,7 +73,7 @@ class App extends Component {
     url += "?interval="+(this.state.daysInterval?this.state.daysInterval:"")
     if (update) url += "&updatedata"
     
-    fetch(url, {
+    fetch((typeof process.env.REACT_APP_SERVER !== "undefined")?process.env.REACT_APP_SERVER:"" + url, {
       method: 'POST', 
       body: JSON.stringify(selectedCountries),
       headers: {
@@ -325,7 +323,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(process.env)
+    
     return (
       <div className="w-100">
         <div className="header" ref={this.headerRef}>
