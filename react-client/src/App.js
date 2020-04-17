@@ -76,7 +76,10 @@ class App extends Component {
     fetch(url, {
       method: 'POST', 
       body: JSON.stringify(selectedCountries),
-      headers: {"Content-Type": "application/json"}
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json'
+      }
     })
     .then((res) => {
       if (res.status === 200) return res.json()
