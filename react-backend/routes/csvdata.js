@@ -42,7 +42,7 @@ class CSVData {
     stack.forEach(element => {
       
       if (element[1]) {
-        if (countries.indexOf(element[1]) == -1) countries.push(element[1].replace(",", ""))
+        if (countries.indexOf(element[1]) == -1) countries.push(element[1])
       }
       i++;
   
@@ -85,7 +85,7 @@ class CSVData {
       
       stack.forEach(element => {
 
-        if ((element[1].replace(",", "") == country) || country == "all") {
+        if ((element[1] == country) || country == "all") {
 
           element.shift()
           element.shift()
@@ -218,11 +218,12 @@ class CSVData {
 }
 
 
-function handleRequest(req, res) {
+function handleRequest(req, res, body) {
   let interval = "", selectedCountries = ""
   
   if (req.query && req.query.interval != null) interval = req.query.interval
-  if (req.params && req.params.id != null) selectedCountries = req.params.id.split(",")
+  if (body && body.length) selectedCountries = body
+  //if (req.params && req.params.id != null) selectedCountries = req.params.id.split(",")
 
   CSVData_ = new CSVData(selectedCountries, interval);
 
@@ -274,13 +275,14 @@ function handleRequest(req, res) {
 
 }
 
-router.get('/:id', function(req, res, next) {
+/*router.post('/:id', function(req, res) {
+  console.log(req.body)
   handleRequest(req, res)
   return;
-})
+})*/
 
-router.get('/', function(req, res, next) {
-  handleRequest(req, res)
+router.post('/', function(req, res) {
+  handleRequest(req, res, req.body)
   return;
 });
 

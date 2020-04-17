@@ -25,7 +25,7 @@ class App extends Component {
       {name: "Italy", status: false},
       {name: "US", status: false},
       {name: "France", status: false},
-      {name: "Korea South", status: false},
+      {name: "Korea, South", status: false},
       {name: "Spain", status: false},
     ],
     chart: [
@@ -64,17 +64,20 @@ class App extends Component {
 
   getData(update=false) {
     
-    const selectedCountries = this.getNamesSelectedCountries();
+    const selectedCountries = this.getSelectedCountries();
     
     this.setState({loaderActive: true})
     
     let url = "/csvdata"
-    if (selectedCountries.length) url = "/csvdata/"+selectedCountries
+    //if (selectedCountries.length) url = "/csvdata/"+selectedCountries
     url += "?interval="+(this.state.daysInterval?this.state.daysInterval:"")
     if (update) url += "&updatedata"
     
-    
-    fetch(url)
+    fetch(url, {
+      method: 'POST', 
+      body: JSON.stringify(selectedCountries),
+      headers: {"Content-Type": "application/json"}
+    })
     .then((res) => {
       if (res.status === 200) return res.json()
       else return [];
@@ -255,7 +258,7 @@ class App extends Component {
     }
   }
 
-  getNamesSelectedCountries() {
+  getSelectedCountries() {
     let countries = []
 
     const temp = this.state.countries.filter(elem => elem.status)
