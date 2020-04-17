@@ -77,8 +77,7 @@ class App extends Component {
       method: 'POST', 
       body: JSON.stringify(selectedCountries),
       headers: {
-        "Content-Type": "application/json",
-        'Accept': 'application/json'
+        "Content-Type": "application/json"
       }
     })
     .then((res) => {
