@@ -323,6 +323,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(process.env.PUBLIC_URL)
     return (
       <div className="w-100">
         <div className="header" ref={this.headerRef}>
