@@ -73,7 +73,7 @@ class App extends Component {
     url += "?interval="+(this.state.daysInterval?this.state.daysInterval:"")
     if (update) url += "&updatedata"
     
-    fetch((typeof process.env.REACT_APP_SERVER !== "undefined")?process.env.REACT_APP_SERVER:"" + url, {
+    fetch(url, {
       method: 'POST', 
       body: JSON.stringify(selectedCountries),
       headers: {
