@@ -5,6 +5,8 @@ import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 import Country from './Components/Country'
 
+process.env.REACT_APP_SERVER = "https://www.my-simple-cloud.com:3001"
+
 class App extends Component {
   
   headerRef = React.createRef();
