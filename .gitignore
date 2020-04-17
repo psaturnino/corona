@@ -4,3 +4,5 @@ react-client/node_modules
 react-client/.env
 react-client/build/*
 react-backend/nohup.out
+react-client/package.json
+react-client/package-lock.json
