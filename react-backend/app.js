@@ -22,9 +22,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(function(req, res, next) {
-  console.log(req.get('host'))
-  console.log(req.get('protocol'))
-  console.log(req.get('secure'))
+  
+  console.log(req.get)
   //res.header("Access-Control-Allow-Origin", req.get('host')); // update to match the domain you will make the 
   //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
