@@ -22,10 +22,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(function(req, res, next) {
-  console.log(req.get('host'))
-  console.log(req.get('protocol'))
-  console.log(req.get('secure'))
-  res.header("Access-Control-Allow-Origin", "https://www.my-simple-cloud.com"); // update to match the domain you will make the 
+  
+  const allowedOrigins = ['http://localhost:3001', 'https://www.my-simple-cloud.com', 'https://my-simple-cloud.com']
+  const allowedOriginsHost = ['http://localhost:3000', 'https://www.my-simple-cloud.com', 'https://my-simple-cloud.com']
+  const index = allowedOrigins.indexOf(req.protocol+"://"+req.get('host'))
+  
+  console.log(req.protocol+"://"+req.get('host'))
+  if(index > -1)
+  {
+       res.setHeader('Access-Control-Allow-Origin', allowedOriginsHost[index]);
+  }
+
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
