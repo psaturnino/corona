@@ -22,9 +22,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(function(req, res, next) {
-  console.log(req.get("referer"))
+  
   const allowedOrigins = [
-    'http://localhost:3000/'
+    'http://localhost:3000/',
+    'https://my-simple-cloud.com',
+    'https://www.my-simple-cloud.com',
   ]
 
   
