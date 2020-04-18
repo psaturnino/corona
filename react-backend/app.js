@@ -28,7 +28,6 @@ app.use(function(req, res, next) {
     'https://my-simple-cloud.com/',
     'https://www.my-simple-cloud.com/',
   ]
-
   
   const index = allowedOrigins.indexOf(req.get("referer"))
   
