@@ -25,7 +25,7 @@ app.use(function(req, res, next) {
   console.log(req.get('host'))
   console.log(req.get('protocol'))
   console.log(req.get('secure'))
-  res.header("Access-Control-Allow-Origin", "https://api.my-simple-cloud.com:3001"); // update to match the domain you will make the 
+  res.header("Access-Control-Allow-Origin", "https://www.my-simple-cloud.com"); // update to match the domain you will make the 
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
