@@ -22,25 +22,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(function(req, res, next) {
-  
+  console.log(req.get("referer"))
   const allowedOrigins = [
-    'http://localhost:3001', 
-    'https://www.my-simple-cloud.com', 
-    'https://my-simple-cloud.com'
+    'http://localhost:3000/'
   ]
 
-  const allowedOriginsHost = [
-    'http://localhost:3000', 
-    'https://www.my-simple-cloud.com', 
-    'https://my-simple-cloud.com'
-  ]
-
-  const index = allowedOrigins.indexOf(req.protocol+"://"+req.get('host'))
   
-  console.log(req.protocol+"://"+req.get('host'))
+  const index = allowedOrigins.indexOf(req.get("referer"))
+  
   if(index > -1)
   {
-       res.setHeader('Access-Control-Allow-Origin', allowedOriginsHost[index]);
+       res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
   }
 
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
