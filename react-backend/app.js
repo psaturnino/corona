@@ -25,8 +25,8 @@ app.use(function(req, res, next) {
   
   const allowedOrigins = [
     'http://localhost:3000/',
-    'https://my-simple-cloud.com',
-    'https://www.my-simple-cloud.com',
+    'https://my-simple-cloud.com/',
+    'https://www.my-simple-cloud.com/',
   ]
 
   
