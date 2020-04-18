@@ -349,7 +349,7 @@ class App extends Component {
               </div>
               
               <div className="col">
-                <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update CSV</button>
+                <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update Data</button>
                 <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.editCountries()}}>Edit</button>
               </div>
             </div>
