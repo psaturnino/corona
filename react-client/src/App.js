@@ -371,7 +371,7 @@ class App extends Component {
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid">
               <div className="row mt-4">
-                <div className="col-sm-3 text-left">{elem.title}:</div>
+                <div className="col-sm-3 text-left">{elem.title}</div>
                 <div className="col-sm-6 text-center">{elem.summary.map((total, key_) => 
                   <span key={key_} style={this.colors[key_]}>&bull; {total}&nbsp;</span>
                   
