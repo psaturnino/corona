@@ -23,8 +23,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
   
-  const allowedOrigins = ['http://localhost:3001', 'https://www.my-simple-cloud.com', 'https://my-simple-cloud.com']
-  const allowedOriginsHost = ['http://localhost:3000', 'https://www.my-simple-cloud.com', 'https://my-simple-cloud.com']
+  const allowedOrigins = [
+    'http://localhost:3001', 
+    'https://www.my-simple-cloud.com', 
+    'https://my-simple-cloud.com'
+  ]
+
+  const allowedOriginsHost = [
+    'http://localhost:3000', 
+    'https://www.my-simple-cloud.com', 
+    'https://my-simple-cloud.com'
+  ]
+
   const index = allowedOrigins.indexOf(req.protocol+"://"+req.get('host'))
   
   console.log(req.protocol+"://"+req.get('host'))
