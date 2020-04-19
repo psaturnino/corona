@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "PORT=3001 nodemon ./bin/www",
-    "deploy": "pm2 start ./server.sh --name Express Server"
+    "deploy": "pm2 start ./server.sh --name Express-Server"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
