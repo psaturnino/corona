@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "deploy": "export NODE_ENV=production&&nodemon ./bin/www"
+    "start": "export PORT=3001&&nodemon ./bin/www",
+    "deploy": "nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
