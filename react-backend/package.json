@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "export PORT=3001&&nodemon ./bin/www",
-    "deploy": "nodemon ./bin/www"
+    "deploy": "export PORT=3001&&nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
