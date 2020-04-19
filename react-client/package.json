@@ -16,7 +16,7 @@
     "request": "^2.88.2"
   },
   "scripts": {
-    "start": "export PORT=5001&&react-scripts start",
+    "start": "export PORT=5000&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
