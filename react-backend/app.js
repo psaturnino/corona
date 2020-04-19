@@ -31,19 +31,14 @@ app.use(function(req, res, next) {
   
   const index = allowedOrigins.indexOf(req.get("referer"))
   
-  if(index > -1)
-  {
-       res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
-  }
-
+  if(index > -1) res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-
 app.use('/', indexRouter);
 app.use('/csvdata', csvDataRouter);
-//app.use('/*', indexRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
