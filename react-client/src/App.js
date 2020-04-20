@@ -366,7 +366,7 @@ class App extends Component {
 
         <Loader active={this.state.loaderActive} />
 
-        <div className="w-100 pl-5 pr-5" ref={this.chartRef}>
+        <div className="w-100 pl-xs-3 pr-xs-3 pl-sm-5 pr-sm-5" ref={this.chartRef}>
           {(this.state.noData===true?<p className="text-center">No Data</p>:"")}
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid">
