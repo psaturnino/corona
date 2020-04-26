@@ -5,6 +5,11 @@ import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 import Country from './Components/Country'
 //import Sort from './Components/Countries'
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-164608295-1');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
 
 class App extends Component {
   
