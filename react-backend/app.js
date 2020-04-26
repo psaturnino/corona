@@ -25,13 +25,11 @@ app.use(function(req, res, next) {
   
   const allowedOrigins = [
     'http://localhost:5000/',
-    'https://my-simple-cloud.com/',
-    'https://www.my-simple-cloud.com/',
-    'https://sars-cov-2-chart.com/',
     'https://www.sars-cov-2-chart.com/',
   ]
   
-  const index = allowedOrigins.indexOf(req.get("referer"))
+  const req_url = req.get("referer").split("?")
+  const index = allowedOrigins.indexOf(req_url[0])
   
   if(index > -1) res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
