@@ -4,6 +4,7 @@ import Chart from './Components/Chart';
 import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 import Country from './Components/Country'
+//import Sort from './Components/Countries'
 
 class App extends Component {
   
@@ -38,7 +39,8 @@ class App extends Component {
   colors = [
     {"color": "#b0b3fc"},
     {"color": "#f77373"},
-    {"color": "#337e50"} 
+    {"color": "#337e50"},
+    {"color": "#ffc107"}
   ]
   
 
@@ -158,7 +160,7 @@ class App extends Component {
         temp[4][0] = res[4][0][0]
         temp[4][1] = res[4][1][0]
         temp[4][2] = res[4][2][0]
-
+        
         chartTitle = [
           "Accumulated",
           "Daily increase",
@@ -174,15 +176,15 @@ class App extends Component {
         dataSetName = [
           ["Cases", "Deaths", "Recovered"],
           ["Cases", "Deaths", "Recovered"],
-          ["Cases", "Deaths", "Recovered"]
+          ["Cases", "Deaths", "Recovered", "Sick"]
         ]
         
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
           [temp[2][1], temp[3][1], temp[4][1]],
-          [temp[2][2], temp[3][2], temp[4][2]],
-  
+          [temp[2][2], temp[3][2], temp[4][2], [temp[2][2] - temp[3][2] - temp[4][2]]],
         ]
+        
         //dataSet[2][0] total cases
         //dataSet[2][1] total daily
         //dataSet[2][2] total deaths
@@ -208,7 +210,7 @@ class App extends Component {
       }
 
       
-      for (let index = this.colors.length; index < dataSet[0].length; index++) {
+      for (let index = this.colors.length; index < dataSet[2].length; index++) {
         this.colors.push({"color" : "#"+((1<<24)*Math.random()|0).toString(16)})
       }
       
@@ -231,7 +233,7 @@ class App extends Component {
   }
 
   handleCountryClick (country) {
-
+    
     if (this.state.editCountries) {
       this.removeCountry(country)
       return;
@@ -356,6 +358,8 @@ class App extends Component {
 
             <div className="row">
               <div className="col">
+              {/*<Sort countries={this.state.countries} handleClick={this.handleCountryClick.bind(this)} editCountries={this.state.editCountries}/>*/}
+              <div className="clearfix"></div>
               {this.state.countries.map((country, key) => 
                 <Country country={country} onClick={() => this.handleCountryClick(country)} key={key} editCountries={this.state.editCountries} />
               )}

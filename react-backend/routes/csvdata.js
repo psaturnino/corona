@@ -234,7 +234,6 @@ router.post('/', function(req, res) {
   CSVData_ = new CSVData(selectedCountries, interval);
 
   if (req.query && req.query.updatedata != null) {
-
     
     let p1 = CSVData_.download(CSVData_.getFile(0).remote, CSVData_.getFile(0).local);
     let p2 = CSVData_.download(CSVData_.getFile(1).remote, CSVData_.getFile(1).local);
