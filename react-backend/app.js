@@ -27,6 +27,8 @@ app.use(function(req, res, next) {
     'http://localhost:5000/',
     'https://my-simple-cloud.com/',
     'https://www.my-simple-cloud.com/',
+    'https://sars-cov-2-chart.com/',
+    'https://www.sars-cov-2-chart.com/',
   ]
   
   const index = allowedOrigins.indexOf(req.get("referer"))
