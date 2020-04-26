@@ -178,11 +178,13 @@ class App extends Component {
           ["Cases", "Deaths", "Recovered"],
           ["Cases", "Deaths", "Recovered", "Sick"]
         ]
+
+        let sick = [temp[2][2] - temp[3][2] - temp[4][2]]
         
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0]],
           [temp[2][1], temp[3][1], temp[4][1]],
-          [temp[2][2], temp[3][2], temp[4][2], [temp[2][2] - temp[3][2] - temp[4][2]]],
+          [temp[2][2], temp[3][2], temp[4][2], sick],
         ]
         
         //dataSet[2][0] total cases
@@ -191,7 +193,7 @@ class App extends Component {
 
         summary[0] = [temp[2][2], temp[3][2], temp[4][2]]
         summary[1] = [temp[2][3], temp[3][3], temp[4][3]]
-        summary[2] = []
+        summary[2] = [temp[2][2], temp[3][2], temp[4][2], sick]
       }
 
       let chart = []
