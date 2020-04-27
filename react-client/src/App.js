@@ -390,6 +390,7 @@ class App extends Component {
               </div>
             </div>
           )}
+          <div className="float-right"><a href="mailto:info@sars-cov-2-chart.com">info@sars-cov-2-chart.com</a></div>
         </div>
       </div>
     );
