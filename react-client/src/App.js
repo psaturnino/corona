@@ -102,7 +102,8 @@ class App extends Component {
         res[2] = []; //cases
         res[3] = []; //deaths
         res[4] = []; //recovered
-        res[5] = []; //selected countries
+        res[5] = []; //sick
+        res[6] = []; //selected countries
       }
 
       const temp = res
@@ -112,7 +113,7 @@ class App extends Component {
       let dataSet = []
       let summary = []
 
-      if (temp[5].length > 1 || temp[5].length === 0) {
+      if (temp[6].length > 1 || temp[6].length === 0) {
         
         chartTitle = [
           "Cases Accumulated",
@@ -131,7 +132,7 @@ class App extends Component {
         summary[0] = []; summary[1] = []; summary[2] = []
         
         
-        temp[5].forEach((country_, key) => {
+        temp[6].forEach((country_, key) => {
           
           dataSetName[0].push(country_)
           dataSetName[1].push(country_)
@@ -162,10 +163,14 @@ class App extends Component {
         temp[4][0] = res[4][0][0]
         temp[4][1] = res[4][1][0]
         temp[4][2] = res[4][2][0]
+
+        temp[5][0] = res[5][0][0]
+        temp[5][1] = res[5][1][0]
+        temp[5][2] = res[5][2][0]
         
         chartTitle = [
-          "Accumulated",
-          "Daily increase",
+          "Accumulation",
+          "Increase",
           "Total"
         ]
 
@@ -176,26 +181,24 @@ class App extends Component {
         ]
 
         dataSetName = [
-          ["Cases", "Deaths", "Recovered"],
-          ["Cases", "Deaths", "Recovered"],
+          ["Cases", "Deaths", "Recovered", "Sick"],
+          ["Cases", "Deaths", "Recovered", "Sick"],
           ["Cases", "Deaths", "Recovered", "Sick"]
         ]
 
-        let sick = [temp[2][2] - temp[3][2] - temp[4][2]]
-        
         dataSet = [
-          [temp[2][0], temp[3][0], temp[4][0]],
-          [temp[2][1], temp[3][1], temp[4][1]],
-          [temp[2][2], temp[3][2], temp[4][2], sick],
+          [temp[2][0], temp[3][0], temp[4][0], temp[5][0]],
+          [temp[2][1], temp[3][1], temp[4][1], temp[5][1]],
+          [temp[2][2], temp[3][2], temp[4][2], temp[5][2]],
         ]
         
         //dataSet[2][0] total cases
         //dataSet[2][1] total daily
         //dataSet[2][2] total deaths
 
-        summary[0] = [temp[2][2], temp[3][2], temp[4][2]]
-        summary[1] = [temp[2][3], temp[3][3], temp[4][3]]
-        summary[2] = [temp[2][2], temp[3][2], temp[4][2], sick]
+        summary[0] = [temp[2][2], temp[3][2], temp[4][2], temp[5][2]]
+        summary[1] = [temp[2][3], temp[3][3], temp[4][3], temp[5][3]]
+        summary[2] = [temp[2][2], temp[3][2], temp[4][2], temp[5][2]]
       }
 
       let chart = []

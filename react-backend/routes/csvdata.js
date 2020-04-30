@@ -127,7 +127,7 @@ class CSVData {
           stackDailyIncrease[key][i] = (current - lastcurrent)>0?(current - lastcurrent):0
           lastcurrent = current
 
-          if (total_days-1 == i) lastDayValue[key] = stackDailyIncrease[key][i]
+          if (total_days-1 == i) lastDayValue[key][0] = stackDailyIncrease[key][i]
           i++
       
       });
@@ -206,11 +206,36 @@ class CSVData {
     data[0] = this.getCountries(total)
     data[1] = this.getDays(days)
 
+    
+
     data[2] = this.calculate(total, data[1].length)
     data[3] = this.calculate(deaths, data[1].length)
     data[4] = this.calculate(recovered, data[1].length)
 
-    data[5] = this.selectedCountries
+    //calculate sick people
+    data[5] = [], data[5][0] = [[]], data[5][1] = [[]], data[5][2] = [[]], data[5][3] = [[]]
+    if (data[2][0].length) {
+      //accumulated
+      
+      data[2][0][0].forEach((element, key) => {
+        data[5][0][0][key] = Math.max(0, element - parseInt(data[3][0][0][key]) - parseInt(data[4][0][0][key]))
+      });
+
+      data[2][1][0].forEach((element, key) => {
+        data[5][1][0][key] = Math.max(0, element - parseInt(data[3][1][0][key]) - parseInt(data[4][1][0][key]))
+      });
+
+      data[2][2][0].forEach((element, key) => {
+        data[5][2][0][key] = Math.max(0, element - parseInt(data[3][2][0][key]) - parseInt(data[4][2][0][key]))
+      });
+
+      data[2][3][0].forEach((element, key) => {
+        data[5][3][0][key] = Math.max(0, element - parseInt(data[3][3][0][key]) - parseInt(data[4][3][0][key]))
+      });
+    }
+    console.log(data[5])
+    
+    data[6] = this.selectedCountries
     
     return data
   }
