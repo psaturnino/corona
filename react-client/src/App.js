@@ -35,6 +35,7 @@ class App extends Component {
       {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
       {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
       {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
+      {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
     ],
   }
 
@@ -116,20 +117,22 @@ class App extends Component {
       if (temp[6].length > 1 || temp[6].length === 0) {
         
         chartTitle = [
-          "Cases Accumulated",
-          "Deaths Accumulated",
-          "Recovered Accumulated"
+          "Cases accumulation",
+          "Deaths accumulation",
+          "Recovered accumulation",
+          "Sick accumulation"
         ]
         
         labels = [
           temp[1],
           temp[1],
           temp[1],
+          temp[1],
         ]
 
-        dataSetName[0] = []; dataSetName[1] = []; dataSetName[2] = [];
-        dataSet[0] = []; dataSet[1] = []; dataSet[2] = []
-        summary[0] = []; summary[1] = []; summary[2] = []
+        dataSetName[0] = []; dataSetName[1] = []; dataSetName[2] = []; dataSetName[3] = [];
+        dataSet[0] = []; dataSet[1] = []; dataSet[2] = []; dataSet[3] = []
+        summary[0] = []; summary[1] = []; summary[2] = []; summary[3] = []
         
         
         temp[6].forEach((country_, key) => {
@@ -137,15 +140,18 @@ class App extends Component {
           dataSetName[0].push(country_)
           dataSetName[1].push(country_)
           dataSetName[2].push(country_)
+          dataSetName[3].push(country_)
 
           //0 accumulted, 1 daily, 2 total
           dataSet[0].push(temp[2][0][key])
           dataSet[1].push(temp[3][0][key])
           dataSet[2].push(temp[4][0][key])
+          dataSet[3].push(temp[5][0][key])
 
           summary[0] = temp[2][2]
           summary[1] = temp[3][2] 
           summary[2] = temp[4][2] 
+          summary[3] = temp[5][2] 
           
         });
       
@@ -171,25 +177,29 @@ class App extends Component {
         chartTitle = [
           "Accumulation",
           "Increase",
-          "Total"
+          "Total",
+          ""
         ]
 
         labels = [
           temp[1],
           temp[1],
-          [""]
+          [""],
+          [""],
         ]
 
         dataSetName = [
           ["Cases", "Deaths", "Recovered", "Sick"],
           ["Cases", "Deaths", "Recovered", "Sick"],
-          ["Cases", "Deaths", "Recovered", "Sick"]
+          ["Cases", "Deaths", "Recovered", "Sick"],
+          ["Cases", "Deaths", "Recovered", "Sick"],
         ]
 
         dataSet = [
           [temp[2][0], temp[3][0], temp[4][0], temp[5][0]],
           [temp[2][1], temp[3][1], temp[4][1], temp[5][1]],
           [temp[2][2], temp[3][2], temp[4][2], temp[5][2]],
+          []
         ]
         
         //dataSet[2][0] total cases
@@ -199,6 +209,8 @@ class App extends Component {
         summary[0] = [temp[2][2], temp[3][2], temp[4][2], temp[5][2]]
         summary[1] = [temp[2][3], temp[3][3], temp[4][3], temp[5][3]]
         summary[2] = [temp[2][2], temp[3][2], temp[4][2], temp[5][2]]
+        summary[3] = ["", "", "", ""]
+        
       }
 
       let chart = []
@@ -212,6 +224,7 @@ class App extends Component {
           dataSetName: dataSetName[index], 
           dataSet: dataSet[index],
           summary: summary[index],
+          display: (chartTitle[index]?"block":"none")
         }
   
       }
@@ -380,7 +393,7 @@ class App extends Component {
         <div className="w-100 pl-xs-3 pr-xs-3 pl-sm-5 pr-sm-5" ref={this.chartRef}>
           {(this.state.noData===true?<p className="text-center">No Data</p>:"")}
           {this.state.chart.map((elem, key) => 
-            <div key={key} className="container-fluid">
+            <div key={key} className="container-fluid" style={{display: elem.display}}>
               <div className="row mt-4">
                 <div className="col-sm-3 text-left">{elem.title}</div>
                 <div className="col-sm-6 text-center">{elem.summary.map((total, key_) => 
@@ -389,7 +402,7 @@ class App extends Component {
                 )}</div>
               </div>
               <div className="row">
-                <Chart chart={elem} colors={this.colors} />
+                <Chart chart={elem} colors={this.colors} key={key} />
               </div>
             </div>
           )}

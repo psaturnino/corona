@@ -213,27 +213,20 @@ class CSVData {
     data[4] = this.calculate(recovered, data[1].length)
 
     //calculate sick people
-    data[5] = [], data[5][0] = [[]], data[5][1] = [[]], data[5][2] = [[]], data[5][3] = [[]]
+    data[5] = []
     if (data[2][0].length) {
       //accumulated
-      
-      data[2][0][0].forEach((element, key) => {
-        data[5][0][0][key] = Math.max(0, element - parseInt(data[3][0][0][key]) - parseInt(data[4][0][0][key]))
-      });
 
-      data[2][1][0].forEach((element, key) => {
-        data[5][1][0][key] = Math.max(0, element - parseInt(data[3][1][0][key]) - parseInt(data[4][1][0][key]))
-      });
-
-      data[2][2][0].forEach((element, key) => {
-        data[5][2][0][key] = Math.max(0, element - parseInt(data[3][2][0][key]) - parseInt(data[4][2][0][key]))
-      });
-
-      data[2][3][0].forEach((element, key) => {
-        data[5][3][0][key] = Math.max(0, element - parseInt(data[3][3][0][key]) - parseInt(data[4][3][0][key]))
+      data[2].forEach((element, key) => {
+        data[5][key] = []
+        element.forEach((element2, key2) => {
+          data[5][key][key2] = []
+          element2.forEach((element3, key3) => {
+            data[5][key][key2][key3] = Math.max(0, element3 - parseInt(data[3][key][key2][key3]) - parseInt(data[4][key][key2][key3]))
+          });  
+        });
       });
     }
-    console.log(data[5])
     
     data[6] = this.selectedCountries
     

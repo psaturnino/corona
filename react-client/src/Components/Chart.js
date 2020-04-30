@@ -4,7 +4,7 @@ import Chart from "chart.js";
 export default class Graph extends Component {
     
     chartRef = React.createRef();
-    myChart = null;
+    myChart;
 
     initChart() {
         const myChartRef = this.chartRef.current
@@ -36,7 +36,7 @@ export default class Graph extends Component {
     
     componentDidUpdate(prevProps) {
         
-        if (prevProps.chart.labels !== this.props.chart.labels) 
+        if ((prevProps.chart.dataSet !== this.props.chart.dataSet))
         {
             this.initChart()
         }
