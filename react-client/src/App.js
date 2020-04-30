@@ -224,7 +224,7 @@ class App extends Component {
           dataSetName: dataSetName[index], 
           dataSet: dataSet[index],
           summary: summary[index],
-          display: (chartTitle[index]?"block":"none")
+          display: (dataSet[index].length?"block":"none")
         }
   
       }
