@@ -24,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
   
   const allowedOrigins = [
+    'http://corona.localhost/',
     'http://localhost:5000/',
     'https://www.sars-cov-2-chart.com/',
   ]
