@@ -28,13 +28,14 @@ app.use(function(req, res, next) {
     'http://localhost:5000/',
     'https://www.sars-cov-2-chart.com/',
   ]
-  console.log(req.get("referer"), 1)
   
-  const req_url = req.get("referer").split("?")
-  const index = allowedOrigins.indexOf(req_url[0])
-  
-  if(index > -1) res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  if (req.get("referer")) {
+    const req_url = req.get("referer").split("?")
+    const index = allowedOrigins.indexOf(req_url[0])
+    
+    if(index > -1) res.setHeader('Access-Control-Allow-Origin', allowedOrigins[index].slice(0, -1));
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  }
   next();
 });
 
