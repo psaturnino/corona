@@ -28,7 +28,9 @@ app.use(function(req, res, next) {
     'http://localhost:5000/',
     'https://www.sars-cov-2-chart.com/',
   ]
-  if (req.get("referer")) {
+
+  console.log(req.get("referer"))
+  {
   
     const req_url = req.get("referer").split("?")
     const index = allowedOrigins.indexOf(req_url[0])
