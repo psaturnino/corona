@@ -224,7 +224,7 @@ class App extends Component {
           dataSetName: dataSetName[index], 
           dataSet: dataSet[index],
           summary: summary[index],
-          display: (dataSet[index].length?"block":"none")
+          display: (dataSet[index].length>1?"block":"none")
         }
   
       }
@@ -351,9 +351,9 @@ class App extends Component {
     return (
       <div className="w-100">
         <div className="header" ref={this.headerRef}>
-          <div className="container">
+          <div className="container-fluid">
             <div className="row mb-2">
-              <div className="col-sm-6">
+              <div className="col-8 col-sm-6">
                 <select onChange={(e) => this.handleChangeCountryList(e)} className="form-control mt-2">
                   <option value="">Add Country</option>
                   {this.state.countryList.map((country, key) =>
@@ -362,15 +362,15 @@ class App extends Component {
                 </select>
               </div>
 
-              <div className="col-sm-2">
+              <div className="col-4 col-sm-2">
                 <select defaultValue = {this.state.daysInterval} onChange={(e) => this.handleChangeDaysList(e)} className="form-control mt-2">
                   <option value="">All Days</option>
                   <option value="30">30 Days</option>
                   <option value="60">60 Days</option>
                 </select>
               </div>
-              
-              <div className="col">
+
+              <div className="col-12 col-sm-4">
                 <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update Data</button>
                 <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.editCountries()}}>Edit</button>
               </div>
@@ -390,7 +390,7 @@ class App extends Component {
 
         <Loader active={this.state.loaderActive} />
 
-        <div className="w-100 pl-xs-3 pr-xs-3 pl-sm-5 pr-sm-5" ref={this.chartRef}>
+        <div className="container-fluid pl-xs-3 pr-xs-3 pl-sm-5 pr-sm-5" ref={this.chartRef}>
           {(this.state.noData===true?<p className="text-center">No Data</p>:"")}
           {this.state.chart.map((elem, key) => 
             <div key={key} className="container-fluid" style={{display: elem.display}}>

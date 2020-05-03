@@ -142,13 +142,20 @@ class CSVData {
   download(url, local) {
     
     return new Promise((resolve, reject) => {
-      let file = fs.createWriteStream(local);
+      let file = fs.createWriteStream(local+"_temp");
       https.get(url, function (response) {
           response.pipe(file);
           file.on('finish', function () {
             file.close(); // close() is async, call callback after close completes.
-            if (file.bytesWritten < 1000) reject(false)
-            else resolve(true)
+            file.on("close", () => {
+              if (file.bytesWritten < 1000) reject(false)
+              else {
+                fs.copyFile(local+"_temp", local, (err) => {
+                  if (err) reject(false)
+                  else resolve(true)
+                })
+              }
+            })
           });
           file.on('error', function (err) {
             fs.unlink(local); // Delete the file async. (But we don't check the result)
@@ -164,11 +171,18 @@ class CSVData {
       let results = [];
  
       try {
-        fs.createReadStream(csvFile)
-        .pipe(csv({ separator: ',', headers: false}))
-        .on('data', (data) => results.push(data))
-        .on('end', () => {
-          resolve(results);
+
+        fs.access(csvFile, (err) => {
+            if (err) {
+              reject(false);
+            } else {
+              fs.createReadStream(csvFile)
+              .pipe(csv({ separator: ',', headers: false}))
+              .on('data', (data) => results.push(data))
+              .on('end', () => {
+                resolve(results);
+              });
+            }
         });
       } catch (error) {
         reject(false);
