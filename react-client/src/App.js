@@ -5,6 +5,7 @@ import Loader from './Components/Loader';
 import cookies from 'cookie-handler';
 import Country from './Components/Country'
 //import Sort from './Components/Countries'
+import LongMenu from './Components/Menu'
 
 
 
@@ -12,6 +13,7 @@ class App extends Component {
   
   headerRef = React.createRef();
   chartRef = React.createRef();
+  btEditCountriesRef = React.createRef();
 
   state = {
     noData: false,
@@ -37,6 +39,10 @@ class App extends Component {
       {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
       {type: "", title:"", labels: [], dataSetName: [], dataSet: [], summary: []},
     ],
+    scenes: [
+
+    ],
+    selectedScene: "",
   }
 
   colors = [
@@ -51,6 +57,8 @@ class App extends Component {
     super()
     const cookie_countries = cookies.get("countries")
     this.state.daysInterval = cookies.get("daysInterval")
+    this.state.scenes = cookies.get("scenes")
+    
 
     if (cookie_countries) {
       if (cookie_countries.length) {
@@ -314,20 +322,52 @@ class App extends Component {
     else this.setState({editCountries: false})
   }
 
-  adjustContentSize(addListen=false) {
-    const fnChangeSize = () => {
-      const h_elem = this.headerRef.current
-      const c_elem = this.chartRef.current
-      c_elem.style.paddingTop=getComputedStyle(h_elem).height
-    }
+  handleClickScene(scene) {
+    
+    if (scene === 0 && this.state.selectedScene !== "") {
+      //delete scene
+      let scenes = this.state.scenes
+      scenes.splice(this.state.selectedScene, 1);
+      cookies.set('scenes', scenes);
 
-    if (addListen) {
-      window.addEventListener("resize", (h_elem, c_elem) => {
-        fnChangeSize()
-      })
-    }
+      this.setState({selectedScene: "", scenes: scenes})
+      
+    }else if (scene === -1) {
+      //new scene
+      let newScene = []
+      newScene.push(
+        {
+          daysInterval: this.state.daysInterval,
+          countries: this.state.countries
+        }
+      )
 
-    fnChangeSize()
+      let scenes = cookies.get('scenes');
+      
+      if (!scenes || !scenes.length) {
+        scenes = []
+        scenes.push(newScene)
+      }else scenes.push(newScene)
+
+      cookies.set('scenes', scenes);
+      this.setState({scenes: scenes, selectedScene: scenes.length})
+
+    }else {
+      //load scene
+      let selectedScene, sceneToLoad;
+      
+      this.state.scenes.forEach((element, key) => {
+        if ((scene-1) === key) {
+          selectedScene = key
+          sceneToLoad = element
+        }
+      });
+
+      if (sceneToLoad[0] && sceneToLoad[0].countries) {
+        this.setState({selectedScene: selectedScene, countries: sceneToLoad[0].countries, daysInterval: sceneToLoad[0].daysInterval}, () => {this.getData()})
+      }
+
+    }
   }
 
   componentDidMount() {
@@ -346,6 +386,36 @@ class App extends Component {
     this.adjustContentSize()
   }
 
+  adjustContentSize(addListen=false) {
+    const fnChangeSize = () => {
+      const h_elem = this.headerRef.current
+      const c_elem = this.chartRef.current
+      c_elem.style.paddingTop=getComputedStyle(h_elem).height
+    }
+
+    if (addListen) {
+      window.addEventListener("resize", (h_elem, c_elem) => {
+        fnChangeSize()
+      })
+    }
+
+    fnChangeSize()
+  }
+
+  onMouseOver() {
+    if (this.current.className.indexOf("selected") === -1) {
+      this.current.className += " sel"
+    } 
+  }
+
+  onMouseOut() {
+    if (this.current.className.indexOf("selected") === -1) {
+      this.current.className = this.current.className.replace("sel", "")
+    } 
+  }
+
+  
+
   render() {
     
     return (
@@ -353,7 +423,7 @@ class App extends Component {
         <div className="header" ref={this.headerRef}>
           <div className="container-fluid">
             <div className="row mb-2">
-              <div className="col-8 col-sm-6">
+              <div className="col-8 col-sm-5">
                 <select onChange={(e) => this.handleChangeCountryList(e)} className="form-control mt-2">
                   <option value="">Add Country</option>
                   {this.state.countryList.map((country, key) =>
@@ -363,16 +433,25 @@ class App extends Component {
               </div>
 
               <div className="col-4 col-sm-2">
-                <select defaultValue = {this.state.daysInterval} onChange={(e) => this.handleChangeDaysList(e)} className="form-control mt-2">
+                <select onChange={(e) => this.handleChangeDaysList(e)} className="form-control mt-2" value={this.state.daysInterval}>
                   <option value="">All Days</option>
-                  <option value="30">30 Days</option>
-                  <option value="60">60 Days</option>
+                  <option value="30" >30 Days</option>
+                  <option value="60" >60 Days</option>
                 </select>
               </div>
 
-              <div className="col-12 col-sm-4">
-                <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3" onClick={() => this.getData(true)}>update Data</button>
-                <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel":""} mt-2`} onClick={(e)=>{this.editCountries()}}>Edit</button>
+              
+
+              <div className="col-12 col-sm-5">
+                
+                <button type="button" className="btn btn-primary btn-sm float-right mt-2 ml-3 shadow-none" onClick={() => this.getData(true)}>update Data</button>
+                <button type="button" className={`btnCustom red float-right ${this.state.editCountries?"sel selected":""} mt-2`} onClick={(e)=>{this.editCountries()}} ref={this.btEditCountriesRef} onMouseOver={this.onMouseOver.bind(this.btEditCountriesRef)} onMouseOut={this.onMouseOut.bind(this.btEditCountriesRef)}>Edit</button>
+                
+                {/*<svg className="bi bi-view-list mt-2 float-right mr-3" width="2em" height="2em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M3 4.5h10a2 2 0 012 2v3a2 2 0 01-2 2H3a2 2 0 01-2-2v-3a2 2 0 012-2zm0 1a1 1 0 00-1 1v3a1 1 0 001 1h10a1 1 0 001-1v-3a1 1 0 00-1-1H3zM1 2a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13A.5.5 0 011 2zm0 12a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13A.5.5 0 011 14z" clip-rule="evenodd"/>
+                  </svg>*/}
+                <LongMenu class={`float-right`} scenes={this.state.scenes} handleClick={this.handleClickScene.bind(this)} />
+                {/**/}
               </div>
             </div>
 
@@ -381,7 +460,7 @@ class App extends Component {
               {/*<Sort countries={this.state.countries} handleClick={this.handleCountryClick.bind(this)} editCountries={this.state.editCountries}/>*/}
               <div className="clearfix"></div>
               {this.state.countries.map((country, key) => 
-                <Country country={country} onClick={() => this.handleCountryClick(country)} key={key} editCountries={this.state.editCountries} />
+                <Country country={country} onClick={() => this.handleCountryClick(country)} key={key} editCountries={this.state.editCountries} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} />
               )}
               </div>
             </div>
