@@ -435,6 +435,9 @@ class App extends Component {
               <div className="col-4 col-sm-2">
                 <select onChange={(e) => this.handleChangeDaysList(e)} className="form-control mt-2" value={this.state.daysInterval}>
                   <option value="">All Days</option>
+                  <option value="5" >5 Days</option>
+                  <option value="10" >10 Days</option>
+                  <option value="15" >15 Days</option>
                   <option value="30" >30 Days</option>
                   <option value="60" >60 Days</option>
                 </select>
