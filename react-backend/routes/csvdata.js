@@ -24,7 +24,7 @@ class CSVData {
     if (!selectedCountries) selectedCountries = ["all"]
     this.selectedCountries = selectedCountries
 
-    this.startAt = interval?interval:0
+    this.startAt = interval?parseInt(interval)+1:0
   }
 
   getFile(num) {
@@ -69,6 +69,8 @@ class CSVData {
       }
       j++
     });
+
+    if (this.startAt) days.shift()
     
     return days
   }
@@ -98,7 +100,7 @@ class CSVData {
           size = element.length
           
           element.forEach(elem => {
-            if (j >= (size - (this.startAt?this.startAt:size))) { 
+            if (j >= (size - (this.startAt?(this.startAt):size))) { 
               if (!stackResults[c][i]) stackResults[c][i] = 0
               
               current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
@@ -131,6 +133,9 @@ class CSVData {
           i++
       
       });
+
+      stackResults[key].shift();
+      stackDailyIncrease[key].shift();
     });
 
     
@@ -226,6 +231,7 @@ class CSVData {
     data[3] = this.calculate(deaths, data[1].length)
     data[4] = this.calculate(recovered, data[1].length)
 
+    
     //calculate sick people
     data[5] = []
     if (data[2][0].length) {
