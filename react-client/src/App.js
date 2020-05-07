@@ -56,7 +56,7 @@ class App extends Component {
   constructor() {
     super()
     const cookie_countries = cookies.get("countries")
-    this.state.daysInterval = cookies.get("daysInterval")
+    this.state.daysInterval = cookies.get("daysInterval")?cookies.get("daysInterval"):""
     this.state.scenes = cookies.get("scenes")
     
 
