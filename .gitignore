@@ -1,5 +1,5 @@
-react-backend/node_modules
-react-backend/public/csse_covid_19_time_series/
+server/node_modules
+server/public/csse_covid_19_time_series/
 react-client/node_modules
 react-client/.env
 react-client/build/*
