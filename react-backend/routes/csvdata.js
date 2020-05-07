@@ -70,7 +70,7 @@ class CSVData {
       j++
     });
 
-    if (this.startAt) days.shift()
+    //if (this.startAt) days.shift()
     
     return days
   }
@@ -134,8 +134,10 @@ class CSVData {
       
       });
 
-      stackResults[key].shift();
-      stackDailyIncrease[key].shift();
+      if (this.startAt) {
+        stackResults[key].shift();
+        stackDailyIncrease[key].shift();
+      }
     });
 
     
@@ -210,7 +212,9 @@ class CSVData {
             files_[key_file][key_line].push(element)
           }
         }
+        
       });
+      
     });
 
     total = files_[0]
@@ -226,12 +230,12 @@ class CSVData {
     data[1] = this.getDays(days)
 
     
-
     data[2] = this.calculate(total, data[1].length)
     data[3] = this.calculate(deaths, data[1].length)
     data[4] = this.calculate(recovered, data[1].length)
 
-    
+    if (this.startAt) data[1].shift();
+
     //calculate sick people
     data[5] = []
     if (data[2][0].length) {
@@ -249,6 +253,8 @@ class CSVData {
     }
     
     data[6] = this.selectedCountries
+
+
     
     return data
   }
@@ -308,6 +314,7 @@ router.post('/', function(req, res) {
   Promise.all([file1, file2, file3])
   .then((r) => {
     const result = CSVData_.handle(r[0], r[1], r[2])
+    
     if (result.length) res.send(JSON.stringify(result))
     else res.sendStatus(500)
   }).catch((r) => {
