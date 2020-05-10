@@ -488,8 +488,30 @@ class App extends Component {
               </div>
             </div>
           )}
-          <div className="float-right pb-3"><a href="mailto:info@sars-cov-2-chart.com">info@sars-cov-2-chart.com</a></div>
+          <div className="float-right pb-3">
+            <a href="mailto:info@sars-cov-2-chart.com">info@sars-cov-2-chart.com</a>
+          </div>
 
+          
+          <div style={{fontSize:"15px",width:"350px"}} className="float-left blockchain-btn" data-address="1K5FFrd1zDRBZzyHpiwDuYncN8TqBMEyDW" data-shared="false">
+            <div className="blockchain stage-begin">
+                <img src="https://blockchain.info/Resources/buttons/donate_64.png" alt="" />
+            </div>
+            <div className="blockchain stage-loading" style={{textAlign:"center"}}>
+                <img src="https://blockchain.info/Resources/loading-large.gif" alt="" />
+            </div>
+            <div className="blockchain stage-ready">
+                <p align="center">Please Donate To Bitcoin Address: <b>[[address]]</b></p>
+                <p align="center" className="qr-code"></p>
+            </div>
+            <div className="blockchain stage-paid">
+                Donation of <b>[[value]] BTC</b> Received. Thank You.
+            </div>
+            <div className="blockchain stage-error">
+                <font color="red">[[error]]</font>
+            </div>
+          </div>
+        
         </div>
       </div>
     );
