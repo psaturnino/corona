@@ -478,7 +478,7 @@ class App extends Component {
             <div key={key} className="container-fluid" style={{display: elem.display}}>
               <div className="row mt-4">
                 <div className="col-sm-3 text-left">{elem.title}</div>
-                <div className="col-sm-6 text-center">{elem.summary.map((total, key_) => 
+                <div className="col-sm-9 text-right">{elem.summary.map((total, key_) => 
                   <span key={key_} style={this.colors[key_]}>&bull; {total}&nbsp;</span>
                   
                 )}</div>
