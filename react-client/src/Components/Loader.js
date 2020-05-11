@@ -8,8 +8,10 @@ const override = css`
   display: block;
   position: fixed; /* or absolute */
   top: 50%;
-  left: 50%;
-  margin: 0 auto;
+  left: 0px;
+  right: 0px;
+  margin-left: auto;
+  margin-right: auto;
   background-color: white;
 `;
  
