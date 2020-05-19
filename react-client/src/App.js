@@ -18,7 +18,6 @@ class App extends Component {
   state = {
     noData: false,
     daysInterval: "",
-    country: "",
     countryList: [],
     editCountries: false,
     loaderActive: true,
@@ -253,9 +252,11 @@ class App extends Component {
     this.setState({daysInterval: days}, () => this.getData())
   }
 
+  
+  
   handleChangeCountryList = (e) => {
     const country = e.target.value
-    this.setState({country: country})
+    //this.setState({country: country})
     e.target.value = ""
     this.addCountry({name: country}, () => this.getData())
   }
@@ -493,7 +494,7 @@ class App extends Component {
           </div>
 
           
-          <div style={{fontSize:"15px",width:"350px"}} className="float-left blockchain-btn" data-address="1Q3r3o8XWPakuZtC74FNVwwDzdnGSj1LQM" data-shared="false">
+          {/*<div style={{fontSize:"15px",width:"350px"}} className="float-left blockchain-btn" data-address="1Q3r3o8XWPakuZtC74FNVwwDzdnGSj1LQM" data-shared="false">
             <div className="blockchain stage-begin">
                 <img src="https://blockchain.info/Resources/buttons/donate_64.png" alt="" />
             </div>
@@ -510,7 +511,7 @@ class App extends Component {
             <div className="blockchain stage-error">
                 <font color="red">[[error]]</font>
             </div>
-          </div>
+          </div>*/}
         
         </div>
       </div>
