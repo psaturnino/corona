@@ -249,9 +249,11 @@ class CSVData {
   }
 
   download(url, local) {
+
+    let today = new Date().toISOString().slice(0, 10)
     
     return new Promise((resolve, reject) => {
-      let file = fs.createWriteStream(local+"_temp");
+      let file = fs.createWriteStream(local+"_"+today);
       https.get(url, function (response) {
           response.pipe(file);
           file.on('finish', function () {
@@ -259,7 +261,7 @@ class CSVData {
             file.on("close", () => {
               if (file.bytesWritten < 1000) reject(false)
               else {
-                fs.copyFile(local+"_temp", local, (err) => {
+                fs.copyFile(local+"_"+today, local, (err) => {
                   if (err) reject(false)
                   else resolve(true)
                 })
