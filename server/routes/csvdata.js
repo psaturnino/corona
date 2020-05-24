@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const https = require('https');
 const csv = require('csv-parser')
+const currentWeekNumber = require('current-week-number');
 
 class CSVData {
   remoteFiles = new Array(
@@ -19,12 +20,14 @@ class CSVData {
 
   selectedCountries = [];
   startAt = 0;
+  group = ""
 
-  constructor (selectedCountries, interval) {
-    if (!selectedCountries) selectedCountries = ["all"]
-    this.selectedCountries = selectedCountries
+  constructor (selectedCountries, interval, group) {
+    
+    this.selectedCountries = !selectedCountries?["all"]:selectedCountries
+    this.startAt = interval?parseInt(interval):0
+    this.group = group?group:""
 
-    this.startAt = interval?parseInt(interval)+1:0
   }
 
   getFile(num) {
@@ -36,24 +39,36 @@ class CSVData {
 
   getCountries(stack) {
 
-    let i = 0;
-    let element_ = [], countries = []
+    let countries = []
     
     stack.forEach(element => {
-      
-      if (element[1]) {
-        if (countries.indexOf(element[1]) == -1) countries.push(element[1])
+      if (element['Country/Region']) {
+        if (countries.indexOf(element['Country/Region']) == -1) countries.push(element['Country/Region'])
       }
-      i++;
-  
     })
     
     return countries
   }
 
+  filterDate(date) {
+    
+    if (this.group == "month") {
+      date = date.split("/")
+      date = date[2]+"."+date[0]
+    }else if (this.group == "week") {
+      let date_ = date.split("/")
+      date = date_[2]+".w"+currentWeekNumber(date)
+    }else if (date) {
+      date = date.split("/")
+      date = date[1]+"."+date[0]
+    }
+    return date
+  }
+
+
   getDays(stack) {
 
-    let days = [], j=0
+    let days = [], j=0, date = "";
     
     stack.shift()
     stack.shift()
@@ -63,20 +78,24 @@ class CSVData {
     const size = stack.length
   
     stack.forEach(elem => {
-      if (j >= (size - (this.startAt?this.startAt:size))) { 
-        elem = elem.split("/")
-        days.push(elem[1]+"."+elem[0])
+      if (j >= (size - (this.startAt?this.startAt:size))) 
+      { 
+        
+        date = this.filterDate(elem)
+        if (days.indexOf(date) == -1) days.push(date)
+        
+        //elem = elem.split("/")
+        //days.push(elem[1]+"."+elem[0])
+        
       }
       j++
     });
 
-    //if (this.startAt) days.shift()
-    
     return days
   }
 
-  calculate(stack, total_days) {
-    let j = 0, current = 0, i=0, c=0, lastcurrent=0, size = 0;
+  calculate(stack) {
+    let j = 0, i=0, c=0, last_elem = {value: 0}, size = 0;
     
     let stackResults = [], stackTotals = [], stackDailyIncrease = []
     
@@ -87,8 +106,9 @@ class CSVData {
       
       stack.forEach(element => {
 
-        if ((element[1] == country) || country == "all") {
+        if ((element[1].value == country) || country == "all") {
 
+          //first 4 columns from csv
           element.shift()
           element.shift()
           element.shift()
@@ -100,14 +120,19 @@ class CSVData {
           size = element.length
           
           element.forEach(elem => {
-            if (j >= (size - (this.startAt?(this.startAt):size))) { 
-              if (!stackResults[c][i]) stackResults[c][i] = 0
-              
-              current = (typeof parseInt(elem) !== 'undefined' && parseInt(elem) != null)?parseInt(elem):0;
+            //if (j >= (size - (this.startAt?(this.startAt):size))) 
+            { 
 
-              stackResults[c][i] += current
+              //if (this.group) i = days.indexOf(this.filterDate(elem.date))
               
-              if (j == (size-1)) stackTotals[c] = [stackResults[c][i]]
+              if (!stackResults[c][i]) stackResults[c][i] = {value: 0}
+              //if (typeof parseInt(elem.value) === 'undefined')console.log("alert alert alert")
+              //current = (typeof parseInt(elem.value) !== 'undefined' && parseInt(elem.value) != null)?parseInt(elem.value):0;
+
+              stackResults[c][i].value += parseInt(elem.value)
+              stackResults[c][i].date = elem.date
+              
+              if (j == (size-1)) stackTotals[c] = [{value: stackResults[c][i].value}]
 
               i++;
             }
@@ -117,35 +142,112 @@ class CSVData {
       });
       c++
     });
-
+    
     let lastDayValue = []
+    
     stackResults.forEach((element, key) => {
       stackDailyIncrease[key] = [];
       lastDayValue[key] = [];
       i=0
       element.forEach(elem => {
         
-          current = elem
-          stackDailyIncrease[key][i] = (current - lastcurrent)>0?(current - lastcurrent):0
-          lastcurrent = current
+          if (!stackDailyIncrease[key][i]) stackDailyIncrease[key][i] = {value: 0}
 
-          if (total_days-1 == i) lastDayValue[key][0] = stackDailyIncrease[key][i]
+          stackDailyIncrease[key][i].value = (elem.value - last_elem.value)>0?(elem.value - last_elem.value):0
+          stackDailyIncrease[key][i].date = elem.date
+
+          last_elem = elem
+
+          if (element.length-1 == i) lastDayValue[key][0] = {value: stackDailyIncrease[key][i].value}
+
           i++
       
       });
 
-      if (this.startAt) {
+      /*if (this.startAt) {
         stackResults[key].shift();
         stackDailyIncrease[key].shift();
-      }
+      }*/
     });
-
     
     return [stackResults, stackDailyIncrease, stackTotals, lastDayValue]
   }
 
 
-  
+  handle(days, total, deaths, recovered) {
+
+    let files = [total, deaths, recovered], data = [], temp = [];
+
+    let files_ = []
+    files.forEach((file, key_file)=> {
+      files_[key_file] = []
+      
+      file.forEach((obj, key_line)=> {
+        files_[key_file][key_line] = []
+
+        for (const key_ in obj) {
+          if (obj.hasOwnProperty(key_)) {
+            const element = obj[key_];
+            files_[key_file][key_line].push({date: key_, value: element})
+          }
+        }
+      });
+    });
+    
+    total = files_[0]
+    deaths = files_[1]
+    recovered = files_[2]
+    
+    data[0] = this.getCountries(days)
+    data[1] = this.getDays(Object.keys(days[0])) //first row of csv
+    days = data[1]
+    
+    temp[2] = this.calculate(total)
+    temp[3] = this.calculate(deaths)
+    temp[4] = this.calculate(recovered)
+    //if (this.startAt) data[1].shift();
+    
+    //calculate sick people
+    data[5] = [], data[2] = [], data[3] = [], data[4] = []
+    
+    let i
+    if (temp[2][0].length) {
+      //accumulated
+      
+      temp[2].forEach((element, key) => {
+        data[5][key] = [], data[2][key] = [], data[3][key] = [], data[4][key] = []
+        element.forEach((element2, key2) => {
+          data[5][key][key2] = [], data[2][key][key2] = [], data[3][key][key2] = [], data[4][key][key2] = []
+          element2.forEach((element3, key3) => {
+
+            i = key3
+            if (element3.date) i = days.indexOf(this.filterDate(element3.date))
+
+            //only if this date is in the days array
+            if (i !== -1) 
+            {
+              if (!data[2][key][key2][i]) data[2][key][key2][i] = 0
+              if (!data[3][key][key2][i]) data[3][key][key2][i] = 0
+              if (!data[4][key][key2][i]) data[4][key][key2][i] = 0
+              if (!data[5][key][key2][i]) data[5][key][key2][i] = 0
+
+              data[5][key][key2][i] += Math.max(0, element3.value - temp[3][key][key2][key3].value - temp[4][key][key2][key3].value)
+
+              data[2][key][key2][i] += temp[2][key][key2][key3].value
+              data[3][key][key2][i] += temp[3][key][key2][key3].value
+              data[4][key][key2][i] += temp[4][key][key2][key3].value
+            }
+              
+          });  
+        });
+      });
+    }
+    
+    data[6] = this.selectedCountries
+
+    return data
+  }
+
   download(url, local) {
     
     return new Promise((resolve, reject) => {
@@ -184,7 +286,7 @@ class CSVData {
               reject(false);
             } else {
               fs.createReadStream(csvFile)
-              .pipe(csv({ separator: ',', headers: false}))
+              .pipe(csv({ separator: ','}))
               .on('data', (data) => results.push(data))
               .on('end', () => {
                 resolve(results);
@@ -195,68 +297,6 @@ class CSVData {
         reject(false);
       }
     })
-  }
-  
-  handle(total, deaths, recovered) {
-
-    let files = [total, deaths, recovered], data = [];
-
-    let files_ = []
-    files.forEach((file, key_file)=> {
-      files_[key_file] = []
-      file.forEach((obj, key_line)=> {
-        files_[key_file][key_line] = []
-        for (const key_ in obj) {
-          if (obj.hasOwnProperty(key_)) {
-            const element = obj[key_];
-            files_[key_file][key_line].push(element)
-          }
-        }
-        
-      });
-      
-    });
-
-    total = files_[0]
-    deaths = files_[1]
-    recovered = files_[2]
-    const days = total[0];
-
-    total.shift()
-    deaths.shift()
-    recovered.shift()
-    
-    data[0] = this.getCountries(total)
-    data[1] = this.getDays(days)
-
-    
-    data[2] = this.calculate(total, data[1].length)
-    data[3] = this.calculate(deaths, data[1].length)
-    data[4] = this.calculate(recovered, data[1].length)
-
-    if (this.startAt) data[1].shift();
-
-    //calculate sick people
-    data[5] = []
-    if (data[2][0].length) {
-      //accumulated
-
-      data[2].forEach((element, key) => {
-        data[5][key] = []
-        element.forEach((element2, key2) => {
-          data[5][key][key2] = []
-          element2.forEach((element3, key3) => {
-            data[5][key][key2][key3] = Math.max(0, element3 - parseInt(data[3][key][key2][key3]) - parseInt(data[4][key][key2][key3]))
-          });  
-        });
-      });
-    }
-    
-    data[6] = this.selectedCountries
-
-
-    
-    return data
   }
 
 }
@@ -269,13 +309,20 @@ class CSVData {
 })*/
 
 router.post('/', function(req, res) {
-  let interval = "", selectedCountries = ""
+  let interval = "", selectedCountries = "", group = ""
   
-  if (req.query && req.query.interval != null) interval = req.query.interval
+  if (req.query && req.query.interval != null) {
+    interval = req.query.interval
+    if (interval == "week" || interval == "month") {
+      group = interval
+      interval = 0
+    }
+  }
   if (req.body && req.body.length) selectedCountries = req.body
+  
   //if (req.params && req.params.id != null) selectedCountries = req.params.id.split(",")
 
-  CSVData_ = new CSVData(selectedCountries, interval);
+  CSVData_ = new CSVData(selectedCountries, interval, group);
 
   if (req.query && req.query.updatedata != null) {
     
@@ -286,13 +333,16 @@ router.post('/', function(req, res) {
     Promise.all([p1, p2, p3])
     .then((r) => {
       
+      const file0 = CSVData_.read(CSVData_.getFile(0).local)
       const file1 = CSVData_.read(CSVData_.getFile(0).local)
       const file2 = CSVData_.read(CSVData_.getFile(1).local)
       const file3 = CSVData_.read(CSVData_.getFile(2).local)
       
-      Promise.all([file1, file2, file3])
+      Promise.all([file0, file1, file2, file3])
       .then((r) => {
-        const result = CSVData_.handle(r[0], r[1], r[2])
+        
+        const result = CSVData_.handle(r[0], r[1], r[2], r[3])
+        
         if (result.length) res.send(JSON.stringify(result))
         else res.sendStatus(500)
       }).catch((r) => {
@@ -306,14 +356,15 @@ router.post('/', function(req, res) {
     return
   }
   
-
+  const file0 = CSVData_.read(CSVData_.getFile(0).local)
   const file1 = CSVData_.read(CSVData_.getFile(0).local)
   const file2 = CSVData_.read(CSVData_.getFile(1).local)
   const file3 = CSVData_.read(CSVData_.getFile(2).local)
   
-  Promise.all([file1, file2, file3])
+  Promise.all([file0, file1, file2, file3])
   .then((r) => {
-    const result = CSVData_.handle(r[0], r[1], r[2])
+    
+    const result = CSVData_.handle(r[0], r[1], r[2], r[3])
     
     if (result.length) res.send(JSON.stringify(result))
     else res.sendStatus(500)
