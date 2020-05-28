@@ -26,6 +26,7 @@ app.use(function(req, res, next) {
   const allowedOrigins = [
     'http://corona.localhost/',
     'http://localhost:5000/',
+    'http://localhost:19002/',
     'https://www.sars-cov-2-chart.com/',
     'https://sars-cov-2-chart.com/',
   ]
