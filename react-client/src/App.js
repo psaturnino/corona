@@ -496,9 +496,9 @@ class App extends Component {
             <a href="https://expo.io/@psaturnino/sars-cov-2-charts" target="_blank">React Native Version (Expo)</a>
           </div>
 
-          <div className="float-right pb-3">
+          {/*<div className="float-right pb-3">
             <a href="mailto:info@sars-cov-2-chart.com">info@sars-cov-2-chart.com</a>
-          </div>
+                </div>*/}
 
           
           {/*<div style={{fontSize:"15px",width:"350px"}} className="float-left blockchain-btn" data-address="1Q3r3o8XWPakuZtC74FNVwwDzdnGSj1LQM" data-shared="false">
