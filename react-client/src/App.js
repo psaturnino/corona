@@ -493,7 +493,7 @@ class App extends Component {
 
 
           <div className="float-left pb-3">
-            <a href="https://expo.io/@psaturnino/sars-cov-2-charts" target="_blank">React Native Version (Expo)</a>
+            <a href="https://expo.io/@psaturnino/sars-cov-2-charts">React Native Version (Expo)</a>
           </div>
 
           {/*<div className="float-right pb-3">
