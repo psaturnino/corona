@@ -1,2 +1,2 @@
-npm run deploy --prefix corona/server
-npm run deploy --prefix corona/react-client
+npm run deploy --prefix server
+npm run deploy --prefix react-client
