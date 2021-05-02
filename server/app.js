@@ -27,6 +27,7 @@ app.use(function(req, res, next) {
     'http://corona.localhost/',
     'http://localhost:5000/',
     'http://localhost:19006/',
+    'http://192.168.0.100:19000/',
     /*'https://www.sars-cov-2-chart.com/',
     'https://sars-cov-2-chart.com/',*/
     'https://covid.my-simple-cloud.com/',
