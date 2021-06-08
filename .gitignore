@@ -3,11 +3,7 @@ server/public/csse_covid_19_time_series/
 react-client/node_modules
 react-client/.env
 react-client/build/*
-react-backend/nohup.out
-react-backend/.env
-react-backend/package-lock.json
+server/nohup.out
 react-client/package-lock.json
 react-client/package-lock.json
-react-client/server.sh
-server/server.sh
 native_sdk41/
