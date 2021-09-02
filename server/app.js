@@ -30,6 +30,7 @@ app.use(function(req, res, next) {
     /*'https://www.sars-cov-2-chart.com/',
     'https://sars-cov-2-chart.com/',*/
     'https://covid.my-simple-cloud.com/',
+    'https://www.covid.my-simple-cloud.com/',
   ]
   
   if (req.get("referer")) {
