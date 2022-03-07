@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use(function(req, res, next) {
   //console.log(req.get("referer"))
   const allowedOrigins = [
